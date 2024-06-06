@@ -54,7 +54,9 @@ async function getEvents() {
         const month = Math.floor((lesson.date % 10000) / 100)
         const day = lesson.date % 100
         const [startHour, startMinute] = parseTime(lesson.startTime)
+        console.log(lesson.startTime)
         const [endHour, endMinute] = parseTime(lesson.endTime)
+        console.log(lesson.startTime)
         let title = 'NO TITLE'
         if (lesson.su[0]) {
             title = lesson.su[0].name
@@ -85,6 +87,7 @@ async function getEvents() {
     untis.logout()
     return events
 }
+getEvents()
 
 const app = express()
 
