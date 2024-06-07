@@ -1,7 +1,7 @@
 const express = require('express')
-const axios = require('axios')
 const ics = require('ics')
 const webuntis = require('webuntis')
+const momentTimezone = require('moment-timezone')
 require('dotenv').config()
 
 const untis = new webuntis.WebUntisAnonymousAuth(process.env.SCHOOL, process.env.DOMAIN)
@@ -9,6 +9,8 @@ const untis = new webuntis.WebUntisAnonymousAuth(process.env.SCHOOL, process.env
 if (process.argv.includes('classes')) {
     getClasses()
 }
+
+console.log(process.env.TIMEZONE)
 
 const parseTime = (time) => {
     const hour = Math.floor(time / 100)
@@ -54,9 +56,7 @@ async function getEvents() {
         const month = Math.floor((lesson.date % 10000) / 100)
         const day = lesson.date % 100
         const [startHour, startMinute] = parseTime(lesson.startTime)
-        console.log(lesson.startTime)
         const [endHour, endMinute] = parseTime(lesson.endTime)
-        console.log(lesson.startTime)
         let title = 'NO TITLE'
         if (lesson.su[0]) {
             title = lesson.su[0].name
@@ -73,10 +73,16 @@ async function getEvents() {
         if (lesson.ro[0]) {
             location = `${lesson.ro[0].longname} (${lesson.ro[0].name})`
         }
+        const startUtc = momentTimezone.tz([year, month, day, startHour, startMinute], process.env.TIMEZONE).utc()
+        const endUtc = momentTimezone.tz([year, month, day, endHour, endMinute], process.env.TIMEZONE).utc()
 
         events.push({
-            start: [year, month, day, startHour, startMinute],
-            end: [year, month, day, endHour, endMinute],
+            start: [startUtc.year(), startUtc.month(), startUtc.date(), startUtc.hour(), startUtc.minute()],
+            startInputType: 'utc',
+            startOutputType: 'utc',
+            end: [endUtc.year(), endUtc.month(), endUtc.date(), endUtc.hour(), endUtc.minute()],
+            endInputType: 'utc',
+            endOutputType: 'utc',
             title,
             description,
             location,
@@ -87,7 +93,6 @@ async function getEvents() {
     untis.logout()
     return events
 }
-getEvents()
 
 const app = express()
 

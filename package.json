@@ -13,6 +13,7 @@
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "ics": "^3.7.2",
+    "moment-timezone": "^0.5.45",
     "node": "^18.20.3",
     "webuntis": "^2.2.1"
   }
