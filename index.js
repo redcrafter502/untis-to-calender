@@ -104,7 +104,7 @@ app.get('/ics', async function (req, res) {
         console.log(error)
         return
     }
-    res.setHeader('Content-Type', 'text/calender')
+    res.setHeader('Content-Type', 'text/calender; charset=utf-8')
     res.send(value)
 
 
