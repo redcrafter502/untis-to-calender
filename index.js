@@ -1,8 +1,8 @@
+require('dotenv').config()
 const express = require('express')
 const ics = require('ics')
 const webuntis = require('webuntis')
 const momentTimezone = require('moment-timezone')
-require('dotenv').config()
 
 const untis = new webuntis.WebUntisAnonymousAuth(process.env.SCHOOL, process.env.DOMAIN)
 
@@ -34,7 +34,7 @@ const getCurrentAndNextWeekRange = () => {
 
 async function getClasses() {
     await untis.login().catch(err => {
-        console.log('Error', err)
+        console.log('Login Error (getClasses)', err)
     })
     const classes = await untis.getClasses()
     classes.forEach(c => {
@@ -46,10 +46,22 @@ async function getClasses() {
 async function getEvents() {
     let events = []
     await untis.login().catch(err => {
-        console.log('Error', err)
+        console.log('Login Error (getEvents)', err)
     })
-    const { startOfCurrentWeek, endOfNextWeek } = getCurrentAndNextWeekRange();
-    const timetable = await untis.getTimetableForRange(startOfCurrentWeek, endOfNextWeek, process.env.CLASS_ID, webuntis.WebUntisElementType.CLASS)
+    const { startOfCurrentWeek, endOfNextWeek } = getCurrentAndNextWeekRange()
+    const timetable = await untis.getTimetableForRange(startOfCurrentWeek, endOfNextWeek, process.env.CLASS_ID, webuntis.WebUntisElementType.CLASS).catch(async (err) => {
+        console.log('For Range Error', err)
+        let returnTimetable = []
+        for (let date = new Date(startOfCurrentWeek); date <= endOfNextWeek; date.setDate(date.getDate() + 1)) {
+            const dayTimetable = await untis.getTimetableFor(date, process.env.CLASS_ID, webuntis.WebUntisElementType.CLASS).catch(dayErr => {
+                console.log('For Day Error', dayErr)
+            })
+            if (dayTimetable) {
+                returnTimetable.push(...dayTimetable)
+            }
+        }
+        return returnTimetable
+    })
 
     timetable.forEach(lesson => {
         const year = Math.floor(lesson.date / 10000)
@@ -99,15 +111,14 @@ const app = express()
 app.get('/ics', async function (req, res) {
     console.log('Updating Calender')
     const events = await getEvents()
-    const {error, value } = ics.createEvents(events)
-    if (error) {
-        console.log(error)
+    const {err, value } = ics.createEvents(events)
+    if (err) {
+        console.log('ICS Error', err)
         return
     }
     res.setHeader('Content-Type', 'text/calender; charset=utf-8')
     res.send(value)
-
-
+    console.log('Updated Successfully')
 })
 
 const PORT = process.env.PORT || 3000
