@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Panel</title>
+</head>
+<script>
+    function copyToClipboard (toBeCopied) {
+        navigator.clipboard.writeText(toBeCopied).then(function() {
+            console.log('Async: Copying to clipboard was successful!');
+        }, function(err) {
+            console.error('Async: Could not copy text: ', err);
+        });
+    }
+    function checkConfirmedPassword() {
+        const input = document.getElementById('newPasswordConfirmed')
+        if (input.value != document.getElementById('newPassword').value) {
+            input.setCustomValidity('Password Must be Matching.')
+        } else {
+            input.setCustomValidity('')
+        }
+    }
+</script>
+<body>
+    <h1>Panel</h1>
+    <a href="/">Home</a>
+    <a href="/logout">Logout</a>
+    <h2>Create UntisAccess</h2>
+    <form action="/panel/new" method="POST">
+        <div>
+            <label for="name">Name</label>
+            <input required type="text" name="name" id="name">
+        </div>
+        <div>
+            <label for="domain">Domain</label>
+            <input type="text" name="domain" id="domain" placeholder="neilo.webuntis.com">
+        </div>
+        <div>
+            <label for="school">School</label>
+            <input required type="text" name="school" id="school">
+        </div>
+        <div>
+            <label for="timezone">Timezone</label>
+            <input type="text" name="timezone" id="tomezone" placeholder="Europe/Berlin">
+        </div>
+        <button type="submit">Create</button>
+    </form>
+    <h2>Change Password</h2>
+    <form action="/panel/change-password" method="POST">
+        <div>
+            <label for="oldPassword">Old Password</label>
+            <input required type="password" name="oldPassword" id="oldPassword">
+        </div>
+        <div>
+            <label for="newPassword">New Password</label>
+            <input required type="password" name="newPassword" id="newPassword" oninput="checkConfirmedPassword()">
+        </div>
+        <div>
+            <label for="newPasswordConfirmed">Confirm New Password</label>
+            <input required type="password" name="newPasswordConfirmed" id="newPasswordConfirmed" oninput="checkConfirmedPassword()">
+        </div>
+        <button type="submit">Change Password</button>
+    </form>
+    <h2>UntisAccesses</h2>
+    <% if (untisAccesses && untisAccesses.length >= 1) { %>
+    <p>You have <%= untisAccesses.length %> UntisAccess<% if (untisAccesses.length !== 1) {%>es<%}%></p>
+    <% untisAccesses.forEach(untisAccess => { %>
+        <div>
+            <h4><a href="/panel/<%= untisAccess.urlID %>"><%= untisAccess.name %></a></h4>
+            <p><%= apiURL %>/ics/<%= untisAccess.urlID %> <button onClick="copyToClipboard('<%= apiURL %>/ics/<%= untisAccess.urlID %>')">Copy</button></p>
+        </div>
+    <% }) %>
+    <% } else { %>
+        <p>You have no UntisAccesses. Create your first one!</p>
+    <% } %>
+</body>
+</html>

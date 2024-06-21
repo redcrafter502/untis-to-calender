@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create</title>
+</head>
+<body>
+<h1>Create</h1>
+<form action="/panel/new-api" method="POST">
+    <div>
+        <label for="name">Name</label>
+        <input disabled type="text" name="name" id="name" value="<%= name %>">
+        <input type="hidden" name="name" id="name" value="<%= name %>">
+    </div>
+    <div>
+        <label for="domain">Domain</label>
+        <input disabled type="text" name="domain" id="domain" value="<%= domain %>">
+        <input type="hidden" name="domain" id="domain" value="<%= domain %>">
+    </div>
+    <div>
+        <label for="school">School</label>
+        <input disabled type="text" name="school" id="school" value="<%= school %>">
+        <input type="hidden" name="school" id="school" value="<%= school %>">
+    </div>
+    <div>
+        <label for="timezone">Timezone</label>
+        <input disabled type="text" name="timezone" id="tomezone" value="<%= timezone %>">
+        <input type="hidden" name="timezone" id="tomezone" value="<%= timezone %>">
+    </div>
+    <div>
+        <label for="classes">Select Class</label>
+        <select name="classes" id="classes">
+            <% classes.forEach(c => { %>
+                <option value="<%= c.id %>"><%= c.name %></option>
+            <% }) %>
+        </select>
+    </div>
+    <a href="/panel">Cancel</a>
+    <button type="submit">Select Class</button>
+</body>
+</html>

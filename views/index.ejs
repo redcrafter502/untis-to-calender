@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Untis to Calender</title>
+</head>
+<body>
+<h1>Untis to Calender</h1>
+<p><%= untisAccessCount %> UntisAccess<% if (untisAccessCount !== 1) {%>es<%}%> from <%= userCount %> User<% if (userCount !== 1) {%>s<%}%></p>
+<% if (loggedIn === true) { %>
+    <a href="/panel">Panel</a>
+    <a href="/logout">Logout</a>
+<% } else { %>
+    <a href="/login">Login</a>
+<% } %>
+</body>
+</html>

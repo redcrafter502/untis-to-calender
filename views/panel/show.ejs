@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= untisAccess.name %></title>
+</head>
+<script>
+    function copyToClipboard (toBeCopied) {
+        navigator.clipboard.writeText(toBeCopied).then(function() {
+            console.log('Async: Copying to clipboard was successful!');
+        }, function(err) {
+            console.error('Async: Could not copy text: ', err);
+        });
+    }
+</script>
+<body>
+    <h1><%= untisAccess.name %></h1>
+    <a href="/">Home</a>
+    <a href="/logout">Logout</a>
+    <a href="/panel">Panel</a>
+    <p>Name: <%= untisAccess.name %></p>
+    <p>Url for ICS: <%= apiURL %>/ics/<%= untisAccess.urlID %> <button onClick="copyToClipboard('<%= apiURL %>/ics/<%= untisAccess.urlID %>')">Copy</button></p>
+    <p>UrlID: <%= untisAccess.urlID %></p>
+    <p>School: <%= untisAccess.school %></p>
+    <p>Domain: <%= untisAccess.domain %></p>
+    <p>ClassID: <%= untisAccess.classID %></p>
+    <p>Timezone: <%= untisAccess.timezone %></p>
+    <form action="/panel/delete" method="POST">
+        <input type="hidden" name="id" id="id" value="<%= untisAccess.id %>">
+        <button type="submit">Delete</button>
+    </form>
+</body>
+</html>
