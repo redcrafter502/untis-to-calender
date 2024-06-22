@@ -6,13 +6,6 @@
       "use": "@vercel/node"
     }
   ],
-  "env": {
-    "DB_USERNAME": "@db_username",
-    "DB_PASSWORD": "@db_password",
-    "DB_DATABASE": "@db_name",
-    "DB_HOST": "@db_host",
-    "DB_DIALECT": "postgres"
-  },
   "routes": [
     {
       "src": "/(.*)",

@@ -6,6 +6,7 @@ const UntisAccessModel = require('./untisAccess.model.js')
 const sequelize = new Sequelize(process.env.DB_DATABASE, process.env.DB_USERNAME, process.env.DB_PASSWORD, {
     host: process.env.DB_HOST,
     dialect: process.env.DB_DIALECT,
+    dialectModule: require('pg'),
     pool: {
         max: parseInt(process.env.DB_POOL_MAX),
         min: parseInt(process.env.DB_POOL_MIN),
