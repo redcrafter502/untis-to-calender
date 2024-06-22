@@ -7,7 +7,6 @@
     }
   ],
   "env": {
-    "PORT": "@PORT",
     "AUTH_SECRET": "@AUTH_SECRET",
     "API_URL": "@API_URL",
     "DB_USERNAME": "@DB_USERNAME",
