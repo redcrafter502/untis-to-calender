@@ -9,8 +9,8 @@ const sequelize = new Sequelize(process.env.DB_DATABASE, process.env.DB_USERNAME
     pool: {
         max: parseInt(process.env.DB_POOL_MAX),
         min: parseInt(process.env.DB_POOL_MIN),
-        acquire: process.env.DB_POOL_ACQUIRE,
-        idle: process.env.DB_POOL_IDLE
+        acquire: parseInt(process.env.DB_POOL_ACQUIRE),
+        idle: parseInt(process.env.DB_POOL_IDLE)
     },
     logging: console.log,
     logQueryParameters: false
