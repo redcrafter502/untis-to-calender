@@ -7,17 +7,11 @@
     }
   ],
   "env": {
-    "AUTH_SECRET": "@AUTH_SECRET",
-    "API_URL": "@API_URL",
-    "DB_USERNAME": "@DB_USERNAME",
-    "DB_PASSWORD": "@DB_PASSWORD",
-    "DB_DATABASE": "@DB_DATABASE",
-    "DB_HOST": "@DB_HOST",
-    "DB_DIALECT": "@DB_DIALECT",
-    "DB_POOL_MAX": "@DB_POOL_MAX",
-    "DB_POOL_MIN": "@DB_POOL_MIN",
-    "DB_POOL_ACQUIRE": "@DB_POOL_ACQUIRE",
-    "DB_POOL_IDLE": "@DB_POOL_IDLE"
+    "DB_USERNAME": "@db_username",
+    "DB_PASSWORD": "@db_password",
+    "DB_DATABASE": "@db_name",
+    "DB_HOST": "@db_host",
+    "DB_DIALECT": "postgres",
   },
   "routes": [
     {
