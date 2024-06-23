@@ -3,10 +3,18 @@ const { Sequelize, DataTypes } = require('sequelize')
 const UserModel = require('./user.model.js')
 const UntisAccessModel = require('./untisAccess.model.js')
 
+const sslRequired = (process.env.DB_SSL_REQUIRED === 'true')
+
 const sequelize = new Sequelize(process.env.DB_DATABASE, process.env.DB_USERNAME, process.env.DB_PASSWORD, {
     host: process.env.DB_HOST,
     dialect: process.env.DB_DIALECT,
     dialectModule: require('pg'),
+    dialectOptions: sslRequired ? {
+      ssl: {
+        //require: (process.env.DB_SSL_REQUIRED === 'true')
+        require: true
+      }
+    } : {},
     pool: {
         max: parseInt(process.env.DB_POOL_MAX),
         min: parseInt(process.env.DB_POOL_MIN),
