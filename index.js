@@ -8,6 +8,7 @@ const momentTimezone = require('moment-timezone')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 const { randomUUID } = require('crypto')
+const path = require('path')
 const db = require('./models')
 
 const UntisAccess = db.untisAccess
@@ -99,6 +100,7 @@ async function getEvents(school, domain, classID, timezone) {
 
 const app = express()
 
+app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'ejs')
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cookieParser())
