@@ -1,16 +1,37 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Untis to Calender</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
 </head>
 <body>
-<h1>Untis to Calender</h1>
-<p><%= untisAccessCount %> UntisAccess<% if (untisAccessCount !== 1) {%>es<%}%> from <%= userCount %> User<% if (userCount !== 1) {%>s<%}%></p>
-<% if (loggedIn === true) { %>
-    <a href="/panel">Panel</a>
-    <a href="/logout">Logout</a>
-<% } else { %>
-    <a href="/login">Login</a>
-<% } %>
+<nav class="navbar navbar-expand bg-body-tertiary">
+    <div class="container-fluid">
+        <span class="navbar-brand mb-0 h1">Untis to Calender</span>
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+                <a class="nav-link active" href="/">Home</a>
+            </li>
+            <% if (loggedIn === true) { %>
+                <li class="nav-item">
+                    <a class="nav-link" href="/panel">Panel</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout">Logout</a>
+                </li>
+            <% } else { %>
+                <li class="nav-item">
+                    <a class="nav-link" href="/login">Login</a>
+                </li>
+            <% } %>
+        </ul>
+    </div>
+</nav>
+<div class="container mt-4">
+    <h1>Welcome to Untis to Calender</h1>
+    <p>Untis to Calender currently has <%= untisAccessCount %> UntisAccess<% if (untisAccessCount !== 1) {%>es<%}%> from <%= userCount %> User<% if (userCount !== 1) {%>s<%}%></p>
+</div>
 </body>
 </html>

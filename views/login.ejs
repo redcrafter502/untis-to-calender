@@ -1,21 +1,38 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
 </head>
 <body>
-<h1>Login</h1>
-<a href="/">Home</a>
-<form action="/login-api" method="POST">
-    <div>
-        <label for="email">Email</label>
-        <input required type="email" name="email" id="email">
+<nav class="navbar navbar-expand bg-body-tertiary">
+    <div class="container-fluid">
+        <span class="navbar-brand mb-0 h1">Untis to Calender</span>
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+                <a class="nav-link" href="/">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="/login">Login</a>
+            </li>
+        </ul>
     </div>
-    <div>
-        <label for="password">Password</label>
-        <input required type="password" name="password" id="password">
-    </div>
-    <button type="submit">Login</button>
-</form>
+</nav>
+<div class="container mt-4">
+    <h2>Login</h2>
+    <form action="/login-api" method="POST">
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input required type="email" name="email" id="email" class="form-control">
+        </div>
+        <div class="form-group mb-3">
+            <label for="password">Password</label>
+            <input required type="password" name="password" id="password" class="form-control">
+        </div>
+        <button type="submit" class="btn btn-primary">Login</button>
+    </form>
+</div>
 </body>
 </html>

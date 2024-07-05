@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
 </head>
 <script>
     function copyToClipboard (toBeCopied) {
@@ -21,56 +24,71 @@
     }
 </script>
 <body>
-    <h1>Panel</h1>
-    <a href="/">Home</a>
-    <a href="/logout">Logout</a>
+<nav class="navbar navbar-expand bg-body-tertiary">
+    <div class="container-fluid">
+        <span class="navbar-brand mb-0 h1">Untis to Calender</span>
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+                <a class="nav-link" href="/">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="/panel">Panel</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/logout">Logout</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+<div class="container mt-4">
     <h2>Create UntisAccess</h2>
     <form action="/panel/new" method="POST">
-        <div>
+        <div class="form-group">
             <label for="name">Name</label>
-            <input required type="text" name="name" id="name">
+            <input required type="text" name="name" id="name" class="form-control">
         </div>
-        <div>
+        <div class="form-group">
             <label for="domain">Domain</label>
-            <input type="text" name="domain" id="domain" placeholder="neilo.webuntis.com">
+            <input type="text" name="domain" id="domain" placeholder="neilo.webuntis.com" class="form-control">
         </div>
-        <div>
+        <div class="form-group">
             <label for="school">School</label>
-            <input required type="text" name="school" id="school">
+            <input required type="text" name="school" id="school" class="form-control">
         </div>
-        <div>
+        <div class="form-group mb-3">
             <label for="timezone">Timezone</label>
-            <input type="text" name="timezone" id="tomezone" placeholder="Europe/Berlin">
+            <input type="text" name="timezone" id="tomezone" placeholder="Europe/Berlin" class="form-control">
         </div>
-        <button type="submit">Create</button>
+        <button type="submit" class="btn btn-primary">Create</button>
     </form>
-    <h2>Change Password</h2>
+    <h2 class="mt-4">Change Password</h2>
     <form action="/panel/change-password" method="POST">
-        <div>
+        <div class="form-group">
             <label for="oldPassword">Old Password</label>
-            <input required type="password" name="oldPassword" id="oldPassword">
+            <input required type="password" name="oldPassword" id="oldPassword" class="form-control">
         </div>
-        <div>
+        <div class="form-group">
             <label for="newPassword">New Password</label>
-            <input required type="password" name="newPassword" id="newPassword" oninput="checkConfirmedPassword()">
+            <input required type="password" name="newPassword" id="newPassword" oninput="checkConfirmedPassword()" class="form-control">
         </div>
-        <div>
+        <div class="form-group mb-3">
             <label for="newPasswordConfirmed">Confirm New Password</label>
-            <input required type="password" name="newPasswordConfirmed" id="newPasswordConfirmed" oninput="checkConfirmedPassword()">
+            <input required type="password" name="newPasswordConfirmed" id="newPasswordConfirmed" oninput="checkConfirmedPassword()" class="form-control">
         </div>
-        <button type="submit">Change Password</button>
+        <button type="submit" class="btn btn-primary">Change Password</button>
     </form>
-    <h2>UntisAccesses</h2>
+    <h2 class="mt-4">UntisAccesses</h2>
     <% if (untisAccesses && untisAccesses.length >= 1) { %>
-    <p>You have <%= untisAccesses.length %> UntisAccess<% if (untisAccesses.length !== 1) {%>es<%}%></p>
+        <p>You have <%= untisAccesses.length %> UntisAccess<% if (untisAccesses.length !== 1) {%>es<%}%></p>
     <% untisAccesses.forEach(untisAccess => { %>
         <div>
             <h4><a href="/panel/<%= untisAccess.urlID %>"><%= untisAccess.name %></a></h4>
-            <p><%= apiURL %>/ics/<%= untisAccess.urlID %> <button onClick="copyToClipboard('<%= apiURL %>/ics/<%= untisAccess.urlID %>')">Copy</button></p>
+            <p><%= apiURL %>/ics/<%= untisAccess.urlID %> <button onClick="copyToClipboard('<%= apiURL %>/ics/<%= untisAccess.urlID %>')" class="btn btn-secondary">Copy</button></p>
         </div>
     <% }) %>
     <% } else { %>
         <p>You have no UntisAccesses. Create your first one!</p>
     <% } %>
+</div>
 </body>
 </html>

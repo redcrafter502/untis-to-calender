@@ -1,40 +1,44 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
 </head>
 <body>
 <h1>Create</h1>
 <form action="/panel/new-api" method="POST">
-    <div>
+    <div class="form-group">
         <label for="name">Name</label>
-        <input disabled type="text" name="name" id="name" value="<%= name %>">
+        <input disabled type="text" name="name" id="name" value="<%= name %>" class="form-control">
         <input type="hidden" name="name" id="name" value="<%= name %>">
     </div>
-    <div>
+    <div class="form-group">
         <label for="domain">Domain</label>
-        <input disabled type="text" name="domain" id="domain" value="<%= domain %>">
+        <input disabled type="text" name="domain" id="domain" value="<%= domain %>" class="form-control">
         <input type="hidden" name="domain" id="domain" value="<%= domain %>">
     </div>
-    <div>
+    <div class="form-group">
         <label for="school">School</label>
-        <input disabled type="text" name="school" id="school" value="<%= school %>">
+        <input disabled type="text" name="school" id="school" value="<%= school %>" class="form-control">
         <input type="hidden" name="school" id="school" value="<%= school %>">
     </div>
-    <div>
+    <div class="form-group">
         <label for="timezone">Timezone</label>
-        <input disabled type="text" name="timezone" id="tomezone" value="<%= timezone %>">
+        <input disabled type="text" name="timezone" id="tomezone" value="<%= timezone %>" class="form-control">
         <input type="hidden" name="timezone" id="tomezone" value="<%= timezone %>">
     </div>
-    <div>
+    <div class="form-group">
         <label for="classes">Select Class</label>
-        <select name="classes" id="classes">
+        <select name="classes" id="classes" class="form-control">
             <% classes.forEach(c => { %>
                 <option value="<%= c.id %>"><%= c.name %></option>
             <% }) %>
         </select>
     </div>
-    <a href="/panel">Cancel</a>
-    <button type="submit">Select Class</button>
+    <a href="/panel" class="btn btn-warning">Cancel</a>
+    <button type="submit" class="btn btn-primary">Select Class</button>
+</form>
 </body>
 </html>

@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= untisAccess.name %></title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
 </head>
 <script>
     function copyToClipboard (toBeCopied) {
@@ -13,20 +16,35 @@
     }
 </script>
 <body>
-    <h1><%= untisAccess.name %></h1>
-    <a href="/">Home</a>
-    <a href="/logout">Logout</a>
-    <a href="/panel">Panel</a>
+<nav class="navbar navbar-expand bg-body-tertiary">
+    <div class="container-fluid">
+        <span class="navbar-brand mb-0 h1">Untis to Calender</span>
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+                <a class="nav-link" href="/">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/panel">Panel</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/logout">Logout</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+<div class="container mt-4">
+    <h2><%= untisAccess.name %></h2>
     <p>Name: <%= untisAccess.name %></p>
-    <p>Url for ICS: <%= apiURL %>/ics/<%= untisAccess.urlID %> <button onClick="copyToClipboard('<%= apiURL %>/ics/<%= untisAccess.urlID %>')">Copy</button></p>
+    <p>Url for ICS: <%= apiURL %>/ics/<%= untisAccess.urlID %> <button onClick="copyToClipboard('<%= apiURL %>/ics/<%= untisAccess.urlID %>')" class="btn btn-secondary">Copy</button></p>
     <p>UrlID: <%= untisAccess.urlID %></p>
     <p>School: <%= untisAccess.school %></p>
     <p>Domain: <%= untisAccess.domain %></p>
     <p>ClassID: <%= untisAccess.classID %></p>
     <p>Timezone: <%= untisAccess.timezone %></p>
-    <form action="/panel/delete" method="POST">
+    <form id="deleteForm" action="/panel/delete" method="POST" onsubmit="return confirm('Are you sure you want to delete?');">
         <input type="hidden" name="id" id="id" value="<%= untisAccess.id %>">
-        <button type="submit">Delete</button>
+        <button type="submit" class="btn btn-danger">Delete</button>
     </form>
+</div>
 </body>
 </html>
