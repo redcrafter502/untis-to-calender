@@ -213,19 +213,15 @@ app.post('/panel/new', async (req, res) => {
         const school = req.body.school
         const timezone = req.body.timezone || 'Europe/Berlin'
         const untis = new webuntis.WebUntisAnonymousAuth(school, domain)
-        console.log('in new panel')
         await untis.login().catch(err => {
             res.redirect('/panel')
             return
         })
-        console.log('login successful')
         const classes = await untis.getClasses().catch(err => {
             res.redirect('/panel')
             return
         })
-        console.log('got classes')
         untis.logout()
-        console.log('logout successful')
         res.render('panel/new', { classes, name, domain, school, timezone })
     })
 })
