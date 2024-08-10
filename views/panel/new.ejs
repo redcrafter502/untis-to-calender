@@ -7,38 +7,56 @@
     <link rel="stylesheet" href="/css/bootstrap.min.css">
 </head>
 <body>
-<h1>Create</h1>
-<form action="/panel/new-api" method="POST">
-    <div class="form-group">
-        <label for="name">Name</label>
-        <input disabled type="text" name="name" id="name" value="<%= name %>" class="form-control">
-        <input type="hidden" name="name" id="name" value="<%= name %>">
+<nav class="navbar navbar-expand bg-body-tertiary">
+    <div class="container-fluid">
+        <span class="navbar-brand mb-0 h1">Untis to Calender</span>
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+                <a class="nav-link" href="/">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="/panel">Panel</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/logout">Logout</a>
+            </li>
+        </ul>
     </div>
-    <div class="form-group">
-        <label for="domain">Domain</label>
-        <input disabled type="text" name="domain" id="domain" value="<%= domain %>" class="form-control">
-        <input type="hidden" name="domain" id="domain" value="<%= domain %>">
-    </div>
-    <div class="form-group">
-        <label for="school">School</label>
-        <input disabled type="text" name="school" id="school" value="<%= school %>" class="form-control">
-        <input type="hidden" name="school" id="school" value="<%= school %>">
-    </div>
-    <div class="form-group">
-        <label for="timezone">Timezone</label>
-        <input disabled type="text" name="timezone" id="tomezone" value="<%= timezone %>" class="form-control">
-        <input type="hidden" name="timezone" id="tomezone" value="<%= timezone %>">
-    </div>
-    <div class="form-group">
-        <label for="classes">Select Class</label>
-        <select name="classes" id="classes" class="form-control">
-            <% classes.forEach(c => { %>
-                <option value="<%= c.id %>"><%= c.name %></option>
-            <% }) %>
-        </select>
-    </div>
-    <a href="/panel" class="btn btn-warning">Cancel</a>
-    <button type="submit" class="btn btn-primary">Select Class</button>
-</form>
+</nav>
+<div class="container mt-4">
+    <h1>Create</h1>
+    <form action="/panel/new-api" method="POST">
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input disabled type="text" name="name" id="name" value="<%= name %>" class="form-control">
+            <input type="hidden" name="name" id="name" value="<%= name %>">
+        </div>
+        <div class="form-group">
+            <label for="domain">Domain</label>
+            <input disabled type="text" name="domain" id="domain" value="<%= domain %>" class="form-control">
+            <input type="hidden" name="domain" id="domain" value="<%= domain %>">
+        </div>
+        <div class="form-group">
+            <label for="school">School</label>
+            <input disabled type="text" name="school" id="school" value="<%= school %>" class="form-control">
+            <input type="hidden" name="school" id="school" value="<%= school %>">
+        </div>
+        <div class="form-group">
+            <label for="timezone">Timezone</label>
+            <input disabled type="text" name="timezone" id="timezone" value="<%= timezone %>" class="form-control">
+            <input type="hidden" name="timezone" id="timezone" value="<%= timezone %>">
+        </div>
+        <div class="form-group mb-3">
+            <label for="classes">Select Class</label>
+            <select name="classes" id="classes" class="form-control">
+                <% classes.forEach(c => { %>
+                    <option value="<%= c.id %>"><%= c.name %></option>
+                <% }) %>
+            </select>
+        </div>
+        <a href="/panel" class="btn btn-warning">Cancel</a>
+        <button type="submit" class="btn btn-primary">Select Class</button>
+    </form>
+</div>
 </body>
 </html>
