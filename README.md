@@ -15,8 +15,8 @@ To run the backend and to run the frontend you must have installed [NodeJs](http
 2. Create a `.env` file with the following configurations:
     * Here you can change the port. Example: `PORT=2000`
     * You need to specify an auth secret for jsonwebtoken. Example: `AUTH_SECRET="supersecretsecret"`
-    * You need to define an url to be displayed in the url. Example: `API_URL=http://localhost:3000`
-    * You need to set the date for your instance of PostgreSQL. Example: `DB_USERNAME="postgres"
+    * You need to define an url to be displayed in the ui. Example: `API_URL=http://localhost:3000`
+    * You need to set the data for your instance of PostgreSQL. Example: `DB_USERNAME="postgres"
 DB_PASSWORD="password"
 DB_DATABASE="untis-to-calender"
 DB_HOST="localhost"
