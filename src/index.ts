@@ -1,20 +1,30 @@
-require('dotenv').config()
-const express = require('express')
-const bodyParser = require('body-parser')
-const cookieParser = require('cookie-parser')
-const ics = require('ics')
-const webuntis = require('webuntis')
-const momentTimezone = require('moment-timezone')
-const jwt = require('jsonwebtoken')
-const bcrypt = require('bcryptjs')
-const { randomUUID } = require('crypto')
-const path = require('path')
-const db = require('./models')
+import dotenv from 'dotenv'
+dotenv.config()
+import express from 'express'
+import bodyParser from 'body-parser'
+import cookieParser from 'cookie-parser'
+import ics from 'ics'
+import webuntis from 'webuntis'
+import momentTimezone from 'moment-timezone'
+import jwt from 'jsonwebtoken'
+import bcrypt from 'bcryptjs'
+import {randomUUID} from 'crypto'
+import path from 'path'
+// @ts-ignore
+import db from './models'
 
 const UntisAccess = db.untisAccess
 const User = db.user
 
-const parseTime = (time) => {
+const PORT = process.env.PORT || 3000
+const AUTH_SECRET = process.env.AUTH_SECRET || "no_secret"
+const API_URL = process.env.API_URL || "http://localhost:3000"
+
+interface JwtPayload {
+    id: number
+}
+
+const parseTime = (time: number) => {
     const hour = Math.floor(time / 100)
     const minute = time % 100
     return [hour, minute]
@@ -34,18 +44,18 @@ const getCurrentAndNextWeekRange = () => {
   return { startOfCurrentWeek, endOfNextWeek }
 }
 
-async function getEvents(school, domain, classID, timezone) {
+async function getEvents(school: string, domain: string, classID: string, timezone: string): Promise<Array<any>> {
     const untis = new webuntis.WebUntisAnonymousAuth(school, domain)
-    let events = []
+    let events: Array<any> = []
     await untis.login().catch(err => {
         console.log('Login Error (getEvents)', err)
     })
     const { startOfCurrentWeek, endOfNextWeek } = getCurrentAndNextWeekRange()
-    const timetable = await untis.getTimetableForRange(startOfCurrentWeek, endOfNextWeek, classID, webuntis.WebUntisElementType.CLASS).catch(async (err) => {
+    const timetable = await untis.getTimetableForRange(startOfCurrentWeek, endOfNextWeek, Number(classID), webuntis.WebUntisElementType.CLASS).catch(async (err) => {
         console.log('For Range Error', err)
         let returnTimetable = []
         for (let date = new Date(startOfCurrentWeek); date <= endOfNextWeek; date.setDate(date.getDate() + 1)) {
-            const dayTimetable = await untis.getTimetableFor(date, classID, webuntis.WebUntisElementType.CLASS).catch(dayErr => {
+            const dayTimetable = await untis.getTimetableFor(date, Number(classID), webuntis.WebUntisElementType.CLASS).catch(dayErr => {
                 console.log('For Day Error', dayErr)
             })
             if (dayTimetable) {
@@ -94,7 +104,7 @@ async function getEvents(school, domain, classID, timezone) {
             busyStatus: lesson.code === 'cancelled' ? 'FREE' : 'BUSY'
         })
     })
-    untis.logout()
+    await untis.logout()
     return events
 }
 
@@ -102,17 +112,17 @@ const app = express()
 
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'ejs')
-app.use('/css', express.static(__dirname + '/node_modules/bootstrap/dist/css'))
+app.use('/css', express.static(__dirname + '/../node_modules/bootstrap/dist/css'))
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cookieParser())
 
 app.get('/ics/:id', async function (req, res) {
     console.log('Updating Calender')
-    untisAccess = await UntisAccess.findOne({where: {urlID: req.params.id}})
+    const untisAccess = await UntisAccess.findOne({where: {urlID: req.params.id}})
     const events = await getEvents(untisAccess.school, untisAccess.domain, untisAccess.classID, untisAccess.timezone)
-    const {err, value} = ics.createEvents(events)
-    if (err) {
-        console.log('ICS Error', err)
+    const {error, value} = ics.createEvents(events)
+    if (error) {
+        console.log('ICS Error', error)
         return
     }
     res.setHeader('Content-Type', 'text/calender; charset=utf-8')
@@ -125,7 +135,8 @@ app.get('/', async (req, res) => {
     const userCount = await User.count()
     const untisAccessCount = await UntisAccess.count()
 
-    jwt.verify(req.cookies.authSession, process.env.AUTH_SECRET, (err, decoded) => {
+    // @ts-ignore
+    jwt.verify(req.cookies.authSession, AUTH_SECRET, (err: any, decoded: JwtPayload) => {
         if (err) {
             loggedIn = false
         } else {
@@ -137,7 +148,8 @@ app.get('/', async (req, res) => {
 })
 
 app.get('/login', (req, res) => {
-    jwt.verify(req.cookies.authSession, process.env.AUTH_SECRET, (err, decoded) => {
+    // @ts-ignore
+    jwt.verify(req.cookies.authSession, AUTH_SECRET, (err: any, decoded: JwtPayload) => {
         if (err) {
             res.render('login')
             return
@@ -157,7 +169,7 @@ app.post('/login-api', async (req, res) => {
         res.redirect('/login')
         return
     }
-    const token = jwt.sign({id: user.id}, process.env.AUTH_SECRET, {
+    const token = jwt.sign({id: user.id}, AUTH_SECRET, {
         expiresIn: 86400 // 24 hours
     })
     res.cookie('authSession', token)
@@ -170,19 +182,21 @@ app.get('/logout', (req, res) => {
 })
 
 app.get('/panel', async (req, res) => {
-    jwt.verify(req.cookies.authSession, process.env.AUTH_SECRET, async (err, decoded) => {
+    // @ts-ignore
+    jwt.verify(req.cookies.authSession, AUTH_SECRET, async (err: any, decoded: JwtPayload) => {
         if (err) {
             res.redirect('/')
             return
         }
         const userID = decoded.id
-        untisAccesses = await UntisAccess.findAll({where: {userID: userID}})
-        res.render('panel/index', { untisAccesses, apiURL: process.env.API_URL })
+        const untisAccesses = await UntisAccess.findAll({where: {userID: userID}})
+        res.render('panel/index', { untisAccesses, apiURL: API_URL })
     })
 })
 
 app.post('/panel/change-password', async (req, res) => {
-    jwt.verify(req.cookies.authSession, process.env.AUTH_SECRET, async (err, decoded) => {
+    // @ts-ignore
+    jwt.verify(req.cookies.authSession, AUTH_SECRET, async (err: any, decoded: JwtPayload) => {
         if (err) {
             res.redirect('/')
             return
@@ -204,7 +218,8 @@ app.post('/panel/change-password', async (req, res) => {
 })
 
 app.post('/panel/new', async (req, res) => {
-    jwt.verify(req.cookies.authSession, process.env.AUTH_SECRET, async (err, decoded) => {
+    // @ts-ignore
+    jwt.verify(req.cookies.authSession, AUTH_SECRET, async (err: any, decoded: JwtPayload) => {
         if (err) {
             res.redirect('/')
             return
@@ -218,17 +233,19 @@ app.post('/panel/new', async (req, res) => {
             res.redirect('/panel')
             return
         })
+        // @ts-ignore
         const classes = await untis.getClasses().catch(err => {
             res.redirect('/panel')
             return
         })
-        untis.logout()
+        await untis.logout()
         res.render('panel/new', { classes, name, domain, school, timezone })
     })
 })
 
 app.post('/panel/new-api', async (req, res) => {
-    jwt.verify(req.cookies.authSession, process.env.AUTH_SECRET, async (err, decoded) => {
+    // @ts-ignore
+    jwt.verify(req.cookies.authSession, AUTH_SECRET, async (err: any, decoded: JwtPayload) => {
         if (err) {
             res.redirect('/')
             return
@@ -248,7 +265,8 @@ app.post('/panel/new-api', async (req, res) => {
 })
 
 app.post('/panel/delete', async (req, res) => {
-    jwt.verify(req.cookies.authSession, process.env.AUTH_SECRET, async (err, decoded) => {
+    // @ts-ignore
+    jwt.verify(req.cookies.authSession, AUTH_SECRET, async (err: any, decoded: JwtPayload) => {
         if (err) {
             res.redirect('/')
             return
@@ -259,17 +277,17 @@ app.post('/panel/delete', async (req, res) => {
 })
 
 app.get('/panel/:id', async (req, res) => {
-    jwt.verify(req.cookies.authSession, process.env.AUTH_SECRET, async (err, decoded) => {
+    // @ts-ignore
+    jwt.verify(req.cookies.authSession, AUTH_SECRET, async (err: any, decoded: JwtPayload) => {
         if (err) {
             res.redirect('/')
             return
         }
         const untisAccess = await UntisAccess.findOne({where: {urlID: req.params.id, userID: decoded.id}})
-        res.render('panel/show', { untisAccess, apiURL: process.env.API_URL })
+        res.render('panel/show', { untisAccess, apiURL: API_URL })
     })
 })
 
-const PORT = process.env.PORT || 3000
 db.sequelize.sync().then(() => {
     app.listen(PORT, () => {
         console.log(`Server is running on port: ${PORT}`)
