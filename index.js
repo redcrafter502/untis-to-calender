@@ -65,22 +65,9 @@ async function getEvents(school, domain, classID, timezone) {
         const day = lesson.date % 100
         const [startHour, startMinute] = parseTime(lesson.startTime)
         const [endHour, endMinute] = parseTime(lesson.endTime)
-        let title = 'NO TITLE'
-        if (lesson.su[0]) {
-            title = lesson.su[0].name
-        } else if (lesson.lstext) {
-            title = lesson.lstext
-        }
-        let description = 'NO DESCRIPTION'
-        if (lesson.su[0]) {
-            description = `${lesson.su[0].longname} - ${lesson.kl.map(k => k.name).join(', ')}`
-        } else if (lesson.lstext) {
-            description = `${lesson.lstext} - ${lesson.kl[0].name}`
-        }
-        let location = 'NO LOCATION'
-        if (lesson.ro[0]) {
-            location = `${lesson.ro[0].longname} (${lesson.ro[0].name})`
-        }
+        const title = lesson.su[0].name || lesson.lstext || 'No Title'
+        const description = `${lesson.su[0].longname} - ${lesson.kl.map(k => k.name).join(', ')}` || `${lesson.lstext} - ${lesson.kl[0].name}` || 'NO DESCRIPTION'
+        const location = `${lesson.ro[0].longname} (${lesson.ro[0].name})` || 'NO LOCATION'
         const startUtc = momentTimezone.tz([year, month, day, startHour, startMinute], timezone).utc()
         const endUtc = momentTimezone.tz([year, month, day, endHour, endMinute], timezone).utc()
 
