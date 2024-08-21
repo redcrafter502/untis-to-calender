@@ -34,11 +34,11 @@ const getCurrentAndNextWeekRange = () => {
     return { startOfCurrentWeek, endOfNextWeek }
 }
 
-function getWebUntis(school, domain) {
+const getWebUntis = (school, domain) => {
     return new webuntis.WebUntisAnonymousAuth(school, domain)
 }
 
-async function getEvents(school, domain, classID, timezone) {
+const getEvents = async (school, domain, classID, timezone) => {
     const untis = getWebUntis(school, domain)
     await untis.login().catch(err => {
         console.log('Login Error (getEvents)', err)
@@ -96,7 +96,7 @@ app.use('/css', express.static(__dirname + '/node_modules/bootstrap/dist/css'))
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cookieParser())
 
-app.get('/ics/:id', async function (req, res) {
+app.get('/ics/:id', async (req, res) => {
     console.log('Updating Calender')
     const untisAccess = await UntisAccess.findOne({where: {urlID: req.params.id}})
     const events = await getEvents(untisAccess.school, untisAccess.domain, untisAccess.classID, untisAccess.timezone)
