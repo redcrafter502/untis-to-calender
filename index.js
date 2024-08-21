@@ -99,7 +99,7 @@ app.use(cookieParser())
 
 app.get('/ics/:id', async function (req, res) {
     console.log('Updating Calender')
-    untisAccess = await UntisAccess.findOne({where: {urlID: req.params.id}})
+    const untisAccess = await UntisAccess.findOne({where: {urlID: req.params.id}})
     const events = await getEvents(untisAccess.school, untisAccess.domain, untisAccess.classID, untisAccess.timezone)
     const {err, value} = ics.createEvents(events)
     if (err) {
@@ -167,7 +167,7 @@ app.get('/panel', async (req, res) => {
             return
         }
         const userID = decoded.id
-        untisAccesses = await UntisAccess.findAll({where: {userID: userID}})
+        const untisAccesses = await UntisAccess.findAll({where: {userID: userID}})
         res.render('panel/index', { untisAccesses, apiURL: process.env.API_URL })
     })
 })
