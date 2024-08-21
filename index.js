@@ -116,7 +116,7 @@ app.get('/', async (req, res) => {
     const userCount = await User.count()
     const untisAccessCount = await UntisAccess.count()
 
-    jwt.verify(req.cookies.authSession, process.env.AUTH_SECRET, (err, decoded) => {
+    jwt.verify(req.cookies.authSession, process.env.AUTH_SECRET, (err, _) => {
         if (err) {
             loggedIn = false
         } else {
@@ -128,7 +128,7 @@ app.get('/', async (req, res) => {
 })
 
 app.get('/login', (req, res) => {
-    jwt.verify(req.cookies.authSession, process.env.AUTH_SECRET, (err, decoded) => {
+    jwt.verify(req.cookies.authSession, process.env.AUTH_SECRET, (err, _) => {
         if (err) {
             res.render('login')
             return
@@ -195,7 +195,7 @@ app.post('/panel/change-password', async (req, res) => {
 })
 
 app.post('/panel/new', async (req, res) => {
-    jwt.verify(req.cookies.authSession, process.env.AUTH_SECRET, async (err, decoded) => {
+    jwt.verify(req.cookies.authSession, process.env.AUTH_SECRET, async (err, _) => {
         if (err) {
             res.redirect('/')
             return
