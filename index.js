@@ -34,8 +34,12 @@ const getCurrentAndNextWeekRange = () => {
   return { startOfCurrentWeek, endOfNextWeek }
 }
 
+function getWebUntis(school, domain) {
+    return new webuntis.WebUntisAnonymousAuth(school, domain)
+}
+
 async function getEvents(school, domain, classID, timezone) {
-    const untis = new webuntis.WebUntisAnonymousAuth(school, domain)
+    const untis = getWebUntis(school, domain)
     let events = []
     await untis.login().catch(err => {
         console.log('Login Error (getEvents)', err)
@@ -213,7 +217,7 @@ app.post('/panel/new', async (req, res) => {
         const domain = req.body.domain || 'neilo.webuntis.com'
         const school = req.body.school
         const timezone = req.body.timezone || 'Europe/Berlin'
-        const untis = new webuntis.WebUntisAnonymousAuth(school, domain)
+        const untis = getWebUntis(school, domain)
         await untis.login().catch(err => {
             res.redirect('/panel')
             return
