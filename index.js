@@ -85,7 +85,7 @@ async function getEvents(school, domain, classID, timezone) {
             busyStatus: lesson.code === 'cancelled' ? 'FREE' : 'BUSY'
         })
     })
-    untis.logout()
+    await untis.logout()
     return events
 }
 
@@ -213,7 +213,7 @@ app.post('/panel/new', async (req, res) => {
             res.redirect('/panel')
             return
         })
-        untis.logout()
+        await untis.logout()
         res.render('panel/new', { classes, name, domain, school, timezone })
     })
 })
