@@ -40,7 +40,6 @@ function getWebUntis(school, domain) {
 
 async function getEvents(school, domain, classID, timezone) {
     const untis = getWebUntis(school, domain)
-    let events = []
     await untis.login().catch(err => {
         console.log('Login Error (getEvents)', err)
     })
@@ -59,7 +58,7 @@ async function getEvents(school, domain, classID, timezone) {
         return returnTimetable
     })
 
-    timetable.forEach(lesson => {
+    const events = timetable.map(lesson => {
         const year = Math.floor(lesson.date / 10000)
         const month = Math.floor((lesson.date % 10000) / 100)
         const day = lesson.date % 100
@@ -71,7 +70,7 @@ async function getEvents(school, domain, classID, timezone) {
         const startUtc = momentTimezone.tz([year, month, day, startHour, startMinute], timezone).utc()
         const endUtc = momentTimezone.tz([year, month, day, endHour, endMinute], timezone).utc()
 
-        events.push({
+        return {
             start: [startUtc.year(), startUtc.month(), startUtc.date(), startUtc.hour(), startUtc.minute()],
             startInputType: 'utc',
             startOutputType: 'utc',
@@ -83,7 +82,7 @@ async function getEvents(school, domain, classID, timezone) {
             location,
             status: lesson.code === 'cancelled' ? 'CANCELLED' : 'CONFIRMED',
             busyStatus: lesson.code === 'cancelled' ? 'FREE' : 'BUSY'
-        })
+        }
     })
     await untis.logout()
     return events
