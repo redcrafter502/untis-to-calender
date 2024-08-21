@@ -21,17 +21,17 @@ const parseTime = (time) => {
 }
 
 const getCurrentAndNextWeekRange = () => {
-  const now = new Date()
+    const now = new Date()
 
-  // Calculate the start of the current week (Monday)
-  const startOfCurrentWeek = new Date(now)
-  startOfCurrentWeek.setDate(now.getDate() - now.getDay() + 1) // Monday
+    // Calculate the start of the current week (Monday)
+    const startOfCurrentWeek = new Date(now)
+    startOfCurrentWeek.setDate(now.getDate() - now.getDay() + 1) // Monday
 
-  // Calculate the end of the next week (Sunday)
-  const endOfNextWeek = new Date(startOfCurrentWeek)
-  endOfNextWeek.setDate(startOfCurrentWeek.getDate() + 13) // Next week's Sunday
+    // Calculate the end of the next week (Sunday)
+    const endOfNextWeek = new Date(startOfCurrentWeek)
+    endOfNextWeek.setDate(startOfCurrentWeek.getDate() + 13) // Next week's Sunday
 
-  return { startOfCurrentWeek, endOfNextWeek }
+    return { startOfCurrentWeek, endOfNextWeek }
 }
 
 function getWebUntis(school, domain) {
