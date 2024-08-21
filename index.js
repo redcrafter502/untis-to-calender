@@ -205,11 +205,11 @@ app.post('/panel/new', async (req, res) => {
         const school = req.body.school
         const timezone = req.body.timezone || 'Europe/Berlin'
         const untis = getWebUntis(school, domain)
-        await untis.login().catch(err => {
+        await untis.login().catch(_ => {
             res.redirect('/panel')
             return
         })
-        const classes = await untis.getClasses().catch(err => {
+        const classes = await untis.getClasses().catch(_ => {
             res.redirect('/panel')
             return
         })
