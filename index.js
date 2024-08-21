@@ -207,11 +207,9 @@ app.post('/panel/new', async (req, res) => {
         const untis = getWebUntis(school, domain)
         await untis.login().catch(_ => {
             res.redirect('/panel')
-            return
         })
         const classes = await untis.getClasses().catch(_ => {
             res.redirect('/panel')
-            return
         })
         await untis.logout()
         res.render('panel/new', { classes, name, domain, school, timezone })
