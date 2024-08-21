@@ -117,11 +117,7 @@ app.get('/', async (req, res) => {
     const untisAccessCount = await UntisAccess.count()
 
     jwt.verify(req.cookies.authSession, process.env.AUTH_SECRET, (err, _) => {
-        if (err) {
-            loggedIn = false
-        } else {
-            loggedIn = true
-        }
+        loggedIn = !err;
         res.render('index', {loggedIn, userCount, untisAccessCount})
     })
 
