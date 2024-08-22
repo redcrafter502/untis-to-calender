@@ -113,12 +113,11 @@ app.get('/ics/:id', async (req, res) => {
 })
 
 app.get('/', async (req, res) => {
-    let loggedIn = false
     const userCount = await User.count()
     const untisAccessCount = await UntisAccess.count()
 
     jwt.verify(req.cookies.authSession, process.env.AUTH_SECRET, (err, _) => {
-        loggedIn = !err;
+        const loggedIn = !err;
         res.render('index', {loggedIn, userCount, untisAccessCount})
     })
 
