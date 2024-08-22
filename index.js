@@ -34,17 +34,11 @@ const getCurrentAndNextWeekRange = () => {
     return { startOfCurrentWeek, endOfNextWeek }
 }
 
-const getWebUntis = (school, domain) => {
-    return new webuntis.WebUntisAnonymousAuth(school, domain)
-}
+const getWebUntis = (school, domain) =>
+    new webuntis.WebUntisAnonymousAuth(school, domain)
 
-const getEvents = async (school, domain, classID, timezone) => {
-    const untis = getWebUntis(school, domain)
-    await untis.login().catch(err => {
-        console.log('Login Error (getEvents)', err)
-    })
-    const { startOfCurrentWeek, endOfNextWeek } = getCurrentAndNextWeekRange()
-    const timetable = await untis.getTimetableForRange(startOfCurrentWeek, endOfNextWeek, classID, webuntis.WebUntisElementType.CLASS).catch(async (err) => {
+const getTimetable = async (startOfCurrentWeek, endOfNextWeek, classID, untis) =>
+    await untis.getTimetableForRange(startOfCurrentWeek, endOfNextWeek, classID, webuntis.WebUntisElementType.CLASS).catch(async (err) => {
         console.log('For Range Error', err)
         let returnTimetable = []
         for (let date = new Date(startOfCurrentWeek); date <= endOfNextWeek; date.setDate(date.getDate() + 1)) {
@@ -57,6 +51,14 @@ const getEvents = async (school, domain, classID, timezone) => {
         }
         return returnTimetable
     })
+
+const getEvents = async (school, domain, classID, timezone) => {
+    const untis = getWebUntis(school, domain)
+    await untis.login().catch(err => {
+        console.log('Login Error (getEvents)', err)
+    })
+    const { startOfCurrentWeek, endOfNextWeek } = getCurrentAndNextWeekRange()
+    const timetable = await getTimetable(startOfCurrentWeek, endOfNextWeek, classID, untis)
 
     const events = timetable.map(lesson => {
         const year = Math.floor(lesson.date / 10000)
