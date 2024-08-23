@@ -13,6 +13,7 @@ const db = require('./models')
 
 const UntisAccess = db.untisAccess
 const PublicUntisAccess = db.publicUntisAccess
+const PrivateUnitsAccess = db.privateUntisAccess
 const User = db.user
 
 const parseTime = (time) => {
@@ -197,26 +198,38 @@ app.post('/panel/new', async (req, res) => {
             res.redirect('/')
             return
         }
+        const type = req.body.type
         const name = req.body.name
         const domain = req.body.domain || 'neilo.webuntis.com'
         const school = req.body.school
         const timezone = req.body.timezone || 'Europe/Berlin'
-        const untis = getWebUntis(school, domain)
-        await untis.login().catch(_ => {
+        if (!(type === 'public' || type === 'private')) {
             res.redirect('/panel')
-        })
-        const classes = await untis.getClasses().catch(_ => {
-            res.redirect('/panel')
-        })
-        await untis.logout()
-        res.render('panel/new', { classes, name, domain, school, timezone })
+            return
+        }
+        let classes = null
+        if (type === 'public') {
+            const untis = getWebUntis(school, domain)
+            await untis.login().catch(_ => {
+                res.redirect('/panel')
+            })
+            classes = await untis.getClasses().catch(_ => {
+                res.redirect('/panel')
+            })
+            await untis.logout()
+        }
+        res.render('panel/new', { type, classes, name, domain, school, timezone })
     })
 })
 
 app.post('/panel/new-api', async (req, res) => {
     jwt.verify(req.cookies.authSession, process.env.AUTH_SECRET, async (err, decoded) => {
         if (err) {
-            res.redirect('/')
+            res.redirect('/panel')
+            return
+        }
+        if (!(req.body.type === 'public' || req.body.type === 'private')) {
+            res.redirect('/panel')
             return
         }
         const urlId = randomUUID()
@@ -225,16 +238,22 @@ app.post('/panel/new-api', async (req, res) => {
             domain: req.body.domain,
             school: req.body.school,
             timezone: req.body.timezone,
-            //classID: req.body.classes,
-            type: 'public',
+            type: req.body.type,
             urlId,
             userId: decoded.id
         })
-
-        await PublicUntisAccess.create({
-            untisAccessId: access.untisAccessId,
-            classId: req.body.classes
-        })
+        if (req.body.type === 'public') {
+            await PublicUntisAccess.create({
+                untisAccessId: access.untisAccessId,
+                classId: req.body.classes
+            })
+        } else {
+            await PrivateUnitsAccess.create({
+                untisAccessId: access.untisAccessId,
+                username: req.body.username,
+                password: req.body.password
+            })
+        }
         res.redirect(`/panel/${urlId}`)
     })
 })

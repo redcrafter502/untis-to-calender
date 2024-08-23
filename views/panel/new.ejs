@@ -27,6 +27,14 @@
     <h1>Create</h1>
     <form action="/panel/new-api" method="POST">
         <div class="form-group">
+            <label for="type">Type of Timetable</label>
+            <select disabled name="type" id="type" class="form-select" >
+                <option <% if (type === 'public') { %>selected<% } %> value="public">Public Timetable</option>
+                <option <% if (type === 'private') { %>selected<% } %> value="private">Private Timetable</option>
+            </select>
+            <input type="hidden" name="type" id="type" value="<%= type %>">
+        </div>
+        <div class="form-group">
             <label for="name">Name</label>
             <input disabled type="text" name="name" id="name" value="<%= name %>" class="form-control">
             <input type="hidden" name="name" id="name" value="<%= name %>">
@@ -46,6 +54,7 @@
             <input disabled type="text" name="timezone" id="timezone" value="<%= timezone %>" class="form-control">
             <input type="hidden" name="timezone" id="timezone" value="<%= timezone %>">
         </div>
+        <% if (type === 'public') { %>
         <div class="form-group mb-3">
             <label for="classes">Select Class</label>
             <select name="classes" id="classes" class="form-control">
@@ -54,6 +63,16 @@
                 <% }) %>
             </select>
         </div>
+        <% } else { %>
+            <div class="form-group">
+                <label for="username">Untis Username</label>
+                <input required type="text" name="username" id="username" class="form-control">
+            </div>
+            <div class="form-group mb-3">
+                <label for="password">Untis Password</label>
+                <input required type="password" name="password" id="password" class="form-control">
+            </div>
+        <% } %>
         <a href="/panel" class="btn btn-warning">Cancel</a>
         <button type="submit" class="btn btn-primary">Select Class</button>
     </form>
