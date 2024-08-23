@@ -44,6 +44,13 @@
     <h2>Create UntisAccess</h2>
     <form action="/panel/new" method="POST">
         <div class="form-group">
+            <label for="type">Type of Timetable</label>
+            <select required name="type" id="type" class="form-select" >
+                <option value="public">Public Timetable</option>
+                <option value="private">Private Timetable</option>
+            </select>
+        </div>
+        <div class="form-group">
             <label for="name">Name</label>
             <input required type="text" name="name" id="name" class="form-control">
         </div>
