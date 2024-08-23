@@ -12,6 +12,7 @@ const path = require('path')
 const db = require('./models')
 
 const UntisAccess = db.untisAccess
+const PublicUntisAccess = db.publicUntisAccess
 const User = db.user
 
 const parseTime = (time) => {
@@ -145,7 +146,7 @@ app.post('/login-api', async (req, res) => {
         res.redirect('/login')
         return
     }
-    const token = jwt.sign({id: user.id}, process.env.AUTH_SECRET, {
+    const token = jwt.sign({id: user.userId}, process.env.AUTH_SECRET, {
         expiresIn: 86400 // 24 hours
     })
     res.cookie('authSession', token)
@@ -163,8 +164,7 @@ app.get('/panel', async (req, res) => {
             res.redirect('/')
             return
         }
-        const userID = decoded.id
-        const untisAccesses = await UntisAccess.findAll({where: {userID: userID}})
+        const untisAccesses = await UntisAccess.findAll({where: {userId: decoded.id}})
         res.render('panel/index', { untisAccesses, apiURL: process.env.API_URL })
     })
 })
@@ -175,7 +175,7 @@ app.post('/panel/change-password', async (req, res) => {
             res.redirect('/')
             return
         }
-        const user = await User.findOne({where: { id: decoded.id }})
+        const user = await User.findOne({where: { userId: decoded.id }})
         const oldPasswordIsValid = bcrypt.compareSync(req.body.oldPassword, user.password)
         if (!oldPasswordIsValid) {
             res.redirect('/panel')
@@ -219,17 +219,23 @@ app.post('/panel/new-api', async (req, res) => {
             res.redirect('/')
             return
         }
-        const urlID = randomUUID()
-        await UntisAccess.create({
+        const urlId = randomUUID()
+        const access = await UntisAccess.create({
             name: req.body.name,
             domain: req.body.domain,
             school: req.body.school,
             timezone: req.body.timezone,
-            classID: req.body.classes,
-            urlID,
-            userID: decoded.id
+            //classID: req.body.classes,
+            type: 'public',
+            urlId,
+            userId: decoded.id
         })
-        res.redirect(`/panel/${urlID}`)
+
+        await PublicUntisAccess.create({
+            untisAccessId: access.untisAccessId,
+            classId: req.body.classes
+        })
+        res.redirect(`/panel/${urlId}`)
     })
 })
 
@@ -239,7 +245,7 @@ app.post('/panel/delete', async (req, res) => {
             res.redirect('/')
             return
         }
-        await UntisAccess.destroy({where: {id: req.body.id, userID: decoded.id}})
+        await UntisAccess.destroy({where: {untisAccessId: req.body.id, userId: decoded.id}})
         res.redirect('/panel')
     })
 })
@@ -250,7 +256,10 @@ app.get('/panel/:id', async (req, res) => {
             res.redirect('/')
             return
         }
-        const untisAccess = await UntisAccess.findOne({where: {urlID: req.params.id, userID: decoded.id}})
+        const untisAccess = await UntisAccess.findOne(
+            {where: {urlId: req.params.id, userId: decoded.id}},
+            { include: { model: UntisAccess, include: [PublicUntisAccess] }
+        })
         res.render('panel/show', { untisAccess, apiURL: process.env.API_URL })
     })
 })

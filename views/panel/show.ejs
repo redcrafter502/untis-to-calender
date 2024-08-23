@@ -35,14 +35,14 @@
 <div class="container mt-4">
     <h2><%= untisAccess.name %></h2>
     <p>Name: <%= untisAccess.name %></p>
-    <p>Url for ICS: <%= apiURL %>/ics/<%= untisAccess.urlID %> <button onClick="copyToClipboard('<%= apiURL %>/ics/<%= untisAccess.urlID %>')" class="btn btn-secondary">Copy</button></p>
-    <p>UrlID: <%= untisAccess.urlID %></p>
+    <p>Url for ICS: <%= apiURL %>/ics/<%= untisAccess.urlId %> <button onClick="copyToClipboard('<%= apiURL %>/ics/<%= untisAccess.urlId %>')" class="btn btn-secondary">Copy</button></p>
+    <p>UrlID: <%= untisAccess.urlId %></p>
     <p>School: <%= untisAccess.school %></p>
     <p>Domain: <%= untisAccess.domain %></p>
     <p>ClassID: <%= untisAccess.classID %></p>
     <p>Timezone: <%= untisAccess.timezone %></p>
     <form id="deleteForm" action="/panel/delete" method="POST" onsubmit="return confirm('Are you sure you want to delete?');">
-        <input type="hidden" name="id" id="id" value="<%= untisAccess.id %>">
+        <input type="hidden" name="id" id="id" value="<%= untisAccess.untisAccessId %>">
         <button type="submit" class="btn btn-danger">Delete</button>
     </form>
 </div>
