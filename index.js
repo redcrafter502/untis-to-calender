@@ -41,6 +41,7 @@ const getTimetable = async (startOfCurrentWeek, endOfNextWeek, classID, untis) =
     await untis.getTimetableForRange(startOfCurrentWeek, endOfNextWeek, classID, webuntis.WebUntisElementType.CLASS).catch(async (err) => {
         console.log('For Range Error', err)
         let returnTimetable = []
+        const returnTimetable = []
         for (let date = new Date(startOfCurrentWeek); date <= endOfNextWeek; date.setDate(date.getDate() + 1)) {
             const dayTimetable = await untis.getTimetableFor(date, classID, webuntis.WebUntisElementType.CLASS).catch(dayErr => {
                 console.log('For Day Error', dayErr)
