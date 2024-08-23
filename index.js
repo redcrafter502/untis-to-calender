@@ -39,12 +39,12 @@ const getWebUntis = (school, domain) =>
 
 const getTimetable = async (startOfCurrentWeek, endOfNextWeek, classID, untis) =>
     await untis.getTimetableForRange(startOfCurrentWeek, endOfNextWeek, classID, webuntis.WebUntisElementType.CLASS).catch(async (err) => {
-        console.log('For Range Error', err)
-        let returnTimetable = []
+        console.error('Timetable for range (or parts of it) not available', err)
+        console.info('Now requesting each day individually from Untis')
         const returnTimetable = []
         for (let date = new Date(startOfCurrentWeek); date <= endOfNextWeek; date.setDate(date.getDate() + 1)) {
             const dayTimetable = await untis.getTimetableFor(date, classID, webuntis.WebUntisElementType.CLASS).catch(dayErr => {
-                console.log('For Day Error', dayErr)
+                console.error('Timetable not available for', date,  dayErr)
             })
             if (dayTimetable) {
                 returnTimetable.push(...dayTimetable)
@@ -56,7 +56,7 @@ const getTimetable = async (startOfCurrentWeek, endOfNextWeek, classID, untis) =
 const getEvents = async (school, domain, classID, timezone) => {
     const untis = getWebUntis(school, domain)
     await untis.login().catch(err => {
-        console.log('Login Error (getEvents)', err)
+        console.error('Login Error (getEvents)', err)
     })
     const { startOfCurrentWeek, endOfNextWeek } = getCurrentAndNextWeekRange()
     const timetable = await getTimetable(startOfCurrentWeek, endOfNextWeek, classID, untis)
@@ -100,17 +100,17 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cookieParser())
 
 app.get('/ics/:id', async (req, res) => {
-    console.log('Updating Calender')
+    console.info('Updating Calender')
     const untisAccess = await UntisAccess.findOne({where: {urlID: req.params.id}})
     const events = await getEvents(untisAccess.school, untisAccess.domain, untisAccess.classID, untisAccess.timezone)
     const {err, value} = ics.createEvents(events)
     if (err) {
-        console.log('ICS Error', err)
+        console.error('ICS Error', err)
         return
     }
     res.setHeader('Content-Type', 'text/calender; charset=utf-8')
     res.send(value)
-    console.log('Updated Successfully')
+    console.info('Updating Completed')
 })
 
 app.get('/', async (req, res) => {
