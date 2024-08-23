@@ -82,8 +82,8 @@
         <p>You have <%= untisAccesses.length %> UntisAccess<% if (untisAccesses.length !== 1) {%>es<%}%></p>
     <% untisAccesses.forEach(untisAccess => { %>
         <div>
-            <h4><a href="/panel/<%= untisAccess.urlID %>"><%= untisAccess.name %></a></h4>
-            <p><%= apiURL %>/ics/<%= untisAccess.urlID %> <button onClick="copyToClipboard('<%= apiURL %>/ics/<%= untisAccess.urlID %>')" class="btn btn-secondary">Copy</button></p>
+            <h4><a href="/panel/<%= untisAccess.urlId %>"><%= untisAccess.name %></a></h4>
+            <p><%= apiURL %>/ics/<%= untisAccess.urlId %> <button onClick="copyToClipboard('<%= apiURL %>/ics/<%= untisAccess.urlId %>')" class="btn btn-secondary">Copy</button></p>
         </div>
     <% }) %>
     <% } else { %>

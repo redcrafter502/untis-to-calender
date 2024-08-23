@@ -1,27 +1,42 @@
-const UntisAccessModel = (sequelize, Sequelize) => sequelize.define("untisAccesses", {
-    userID: {
+const UntisAccessModel = (sequelize, Sequelize) => sequelize.define('untisAccesses', {
+    untisAccessId: {
         type: Sequelize.INTEGER,
-        references: { model: 'users', key: 'id' },
-        onDelete: 'CASCADE'
+        autoIncrement: true,
+        primaryKey: true
+    },
+    userId: {
+        type: Sequelize.INTEGER,
+        references: { model: 'users', key: 'userId' },
+        onDelete: 'CASCADE',
+        allowNull: false
+    },
+    type: {
+        type: Sequelize.ENUM('public', 'private'),
+        allowNull: false
     },
     name: {
-        type: Sequelize.STRING
-    },
-    urlID: {
         type: Sequelize.STRING,
-        unique: true
+        allowNull: false
+    },
+    urlId: {
+        type: Sequelize.STRING,
+        unique: true,
+        allowNull: false
     },
     school: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false
     },
     domain: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false
     },
-    classID: {
+    /*classID: {
         type: Sequelize.STRING
-    },
+    },*/
     timezone: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false
     }
 })
 
