@@ -39,8 +39,15 @@
     <p>UrlID: <%= untisAccess.urlId %></p>
     <p>School: <%= untisAccess.school %></p>
     <p>Domain: <%= untisAccess.domain %></p>
-    <p>ClassID: <%= untisAccess.classID %></p>
     <p>Timezone: <%= untisAccess.timezone %></p>
+    <% if (untisAccess.type === 'public') { %>
+        <p>Type: Public Timetable</p>
+        <p>ClassID: <%= untisAccess.publicUntisAccess.classId %></p>
+    <% } else { %>
+        <p>Type: Private Timetable</p>
+        <p>Untis Username: <%= untisAccess.privateUntisAccess.username %></p>
+        <p>Untis Password: <%= untisAccess.privateUntisAccess.password %></p>
+    <% } %>
     <form id="deleteForm" action="/panel/delete" method="POST" onsubmit="return confirm('Are you sure you want to delete?');">
         <input type="hidden" name="id" id="id" value="<%= untisAccess.untisAccessId %>">
         <button type="submit" class="btn btn-danger">Delete</button>

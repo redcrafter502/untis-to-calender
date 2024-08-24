@@ -276,9 +276,8 @@ app.get('/panel/:id', async (req, res) => {
             return
         }
         const untisAccess = await UntisAccess.findOne(
-            {where: {urlId: req.params.id, userId: decoded.id}},
-            { include: { model: UntisAccess, include: [PublicUntisAccess] }
-        })
+            {where: {urlId: req.params.id, userId: decoded.id}, include: [ PublicUntisAccess, PrivateUnitsAccess ] }
+        )
         res.render('panel/show', { untisAccess, apiURL: process.env.API_URL })
     })
 })
