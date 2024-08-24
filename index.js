@@ -36,16 +36,21 @@ const getCurrentAndNextWeekRange = () => {
     return { startOfCurrentWeek, endOfNextWeek }
 }
 
-const getWebUntis = (school, domain) =>
-    new webuntis.WebUntisAnonymousAuth(school, domain)
+const getWebUntis = (untisAccess) => {
+    if (untisAccess.type === 'public') {
+        return new webuntis.WebUntisAnonymousAuth(untisAccess.school, untisAccess.domain)
+    } else {
+        return new webuntis.WebUntis(untisAccess.school, untisAccess.privateUntisAccess.username, untisAccess.privateUntisAccess.password, untisAccess.domain)
+    }
+}
 
-const getTimetable = async (startOfCurrentWeek, endOfNextWeek, classID, untis) =>
-    await untis.getTimetableForRange(startOfCurrentWeek, endOfNextWeek, classID, webuntis.WebUntisElementType.CLASS).catch(async (err) => {
+const getPublicTimetable = async (startOfCurrentWeek, endOfNextWeek, classId, untis) =>
+    await untis.getTimetableForRange(startOfCurrentWeek, endOfNextWeek, classId, webuntis.WebUntisElementType.CLASS).catch(async (err) => {
         console.error('Timetable for range (or parts of it) not available', err)
         console.info('Now requesting each day individually from Untis')
         const returnTimetable = []
         for (let date = new Date(startOfCurrentWeek); date <= endOfNextWeek; date.setDate(date.getDate() + 1)) {
-            const dayTimetable = await untis.getTimetableFor(date, classID, webuntis.WebUntisElementType.CLASS).catch(dayErr => {
+            const dayTimetable = await untis.getTimetableFor(date, classId, webuntis.WebUntisElementType.CLASS).catch(dayErr => {
                 console.error('Timetable not available for', date,  dayErr)
             })
             if (dayTimetable) {
@@ -55,13 +60,37 @@ const getTimetable = async (startOfCurrentWeek, endOfNextWeek, classID, untis) =
         return returnTimetable
     })
 
-const getEvents = async (school, domain, classID, timezone) => {
-    const untis = getWebUntis(school, domain)
+const getOwnTimetable = async (startOfCurrentWeek, endOfNextWeek, untis) =>
+    await untis.getOwnTimetableForRange(startOfCurrentWeek, endOfNextWeek).catch(async (err) => {
+        console.error('Timetable for range (or parts of it) not available', err)
+        console.info('Now requesting each day individually from Untis')
+        const returnTimetable = []
+        for (let date = new Date(startOfCurrentWeek); date <= endOfNextWeek; date.setDate(date.getDate() + 1)) {
+            const dayTimetable = await untis.getOwnTimetableFor(date).catch(dayErr => {
+                console.error('Timetable not available for', date,  dayErr)
+            })
+            if (dayTimetable) {
+                returnTimetable.push(...dayTimetable)
+            }
+        }
+        return returnTimetable
+    })
+
+const getTimetable = async (startOfCurrentWeek, endOfNextWeek, untisAccess, untis) => {
+    if (untisAccess.type === 'public') {
+        return await getPublicTimetable(startOfCurrentWeek, endOfNextWeek, untisAccess.publicUntisAccess.classId, untis)
+    } else {
+        return await getOwnTimetable(startOfCurrentWeek, endOfNextWeek, untis)
+    }
+}
+
+const getEvents = async (untisAccess) => {
+    const untis = getWebUntis(untisAccess)
     await untis.login().catch(err => {
         console.error('Login Error (getEvents)', err)
     })
     const { startOfCurrentWeek, endOfNextWeek } = getCurrentAndNextWeekRange()
-    const timetable = await getTimetable(startOfCurrentWeek, endOfNextWeek, classID, untis)
+    const timetable = await getTimetable(startOfCurrentWeek, endOfNextWeek, untisAccess, untis)
 
     const events = timetable.map(lesson => {
         const year = Math.floor(lesson.date / 10000)
@@ -72,8 +101,8 @@ const getEvents = async (school, domain, classID, timezone) => {
         const title = lesson.su[0].name || lesson.lstext || 'No Title'
         const description = `${lesson.su[0].longname} - ${lesson.kl.map(k => k.name).join(', ')}` || `${lesson.lstext} - ${lesson.kl[0].name}` || 'NO DESCRIPTION'
         const location = `${lesson.ro[0].longname} (${lesson.ro[0].name})` || 'NO LOCATION'
-        const startUtc = momentTimezone.tz([year, month, day, startHour, startMinute], timezone).utc()
-        const endUtc = momentTimezone.tz([year, month, day, endHour, endMinute], timezone).utc()
+        const startUtc = momentTimezone.tz([year, month, day, startHour, startMinute], untisAccess.timezone).utc()
+        const endUtc = momentTimezone.tz([year, month, day, endHour, endMinute], untisAccess.timezone).utc()
 
         return {
             start: [startUtc.year(), startUtc.month(), startUtc.date(), startUtc.hour(), startUtc.minute()],
@@ -103,8 +132,9 @@ app.use(cookieParser())
 
 app.get('/ics/:id', async (req, res) => {
     console.info('Updating Calender')
-    const untisAccess = await UntisAccess.findOne({where: {urlID: req.params.id}})
-    const events = await getEvents(untisAccess.school, untisAccess.domain, untisAccess.classID, untisAccess.timezone)
+    const untisAccess = await UntisAccess.findOne({where: {urlId: req.params.id}, include: [ PublicUntisAccess, PrivateUnitsAccess ] })
+    //const events = await getEvents(untisAccess.school, untisAccess.domain, untisAccess.classID, untisAccess.timezone)
+    const events = await getEvents(untisAccess)
     const {err, value} = ics.createEvents(events)
     if (err) {
         console.error('ICS Error', err)
