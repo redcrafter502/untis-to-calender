@@ -238,7 +238,7 @@ app.post('/panel/new', async (req, res) => {
         }
         let classes = null
         if (type === 'public') {
-            const untis = getWebUntis(school, domain)
+            const untis = getWebUntis({ school, domain, type: 'public' })
             await untis.login().catch(_ => {
                 res.redirect('/panel')
             })
