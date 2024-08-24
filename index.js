@@ -133,7 +133,6 @@ app.use(cookieParser())
 app.get('/ics/:id', async (req, res) => {
     console.info('Updating Calender')
     const untisAccess = await UntisAccess.findOne({where: {urlId: req.params.id}, include: [ PublicUntisAccess, PrivateUnitsAccess ] })
-    //const events = await getEvents(untisAccess.school, untisAccess.domain, untisAccess.classID, untisAccess.timezone)
     const events = await getEvents(untisAccess)
     const {err, value} = ics.createEvents(events)
     if (err) {
