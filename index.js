@@ -271,7 +271,7 @@ app.post('/panel/new', async (req, res) => {
             await untis.login().catch(_ => {
                 res.redirect('/panel')
             })
-            classes = await untis.getClasses().catch(_ => {
+            classes = await untis.getClasses(true, await untis.getCurrentSchoolyear().id).catch(_ => {
                 res.redirect('/panel')
             })
             await untis.logout()
