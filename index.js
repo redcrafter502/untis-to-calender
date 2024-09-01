@@ -92,7 +92,29 @@ const getEvents = async (untisAccess) => {
     const { startOfCurrentWeek, endOfNextWeek } = getCurrentAndNextWeekRange()
     const timetable = await getTimetable(startOfCurrentWeek, endOfNextWeek, untisAccess, untis)
 
+    let homework = {
+        records: [],
+        homeworks: [],
+        teachers: [],
+        lessons: []
+    }
+    if (untisAccess.type === 'private') {
+        homework = await untis.getHomeWorksFor(startOfCurrentWeek, endOfNextWeek)
+    }
+
     const events = timetable.map(lesson => {
+        const homeworks = []
+        homework.homeworks.forEach(iHomework => {
+            const homeworkLesson = homework.lessons.filter(l => l.id === iHomework.lessonId)
+            const correctLesson = homeworkLesson[0].subject === `${lesson.su[0].longname} (${lesson.su[0].name})`
+            if (lesson.date === iHomework.date && correctLesson) {
+                homeworks.push(`${iHomework.text} (Start)`)
+            }
+            if (lesson.date === iHomework.dueDate && correctLesson) {
+                homeworks.push(`${iHomework.text} (End)`)
+            }
+        })
+
         const year = Math.floor(lesson.date / 10000)
         const month = Math.floor((lesson.date % 10000) / 100)
         const day = lesson.date % 100
@@ -103,6 +125,7 @@ const getEvents = async (untisAccess) => {
         const location = `${lesson.ro[0].longname} (${lesson.ro[0].name})` || 'NO LOCATION'
         const startUtc = momentTimezone.tz([year, month, day, startHour, startMinute], untisAccess.timezone).utc()
         const endUtc = momentTimezone.tz([year, month, day, endHour, endMinute], untisAccess.timezone).utc()
+        const descriptionWithHomework = [description, ...homeworks].join(`\n`)
 
         return {
             start: [startUtc.year(), startUtc.month(), startUtc.date(), startUtc.hour(), startUtc.minute()],
@@ -112,7 +135,7 @@ const getEvents = async (untisAccess) => {
             endInputType: 'utc',
             endOutputType: 'utc',
             title,
-            description,
+            description: descriptionWithHomework,
             location,
             status: lesson.code === 'cancelled' ? 'CANCELLED' : 'CONFIRMED',
             busyStatus: lesson.code === 'cancelled' ? 'FREE' : 'BUSY',
@@ -141,7 +164,7 @@ app.get('/ics/:id', async (req, res) => {
         console.error('ICS Error', err)
         return
     }
-    res.setHeader('Content-Type', 'text/calender; charset=utf-8')
+    res.setHeader('Content-Type', 'text/calendar; charset=utf-8')
     res.send(value)
     console.info('Updating Completed')
 })
