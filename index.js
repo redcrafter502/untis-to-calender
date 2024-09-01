@@ -179,7 +179,11 @@ app.post('/login-api', async (req, res) => {
     const token = jwt.sign({id: user.userId}, process.env.AUTH_SECRET, {
         expiresIn: 86400 // 24 hours
     })
-    res.cookie('authSession', token)
+    res.cookie('authSession', token, {
+        secure: true,
+        httpOnly: true,
+        sameSite: 'strict'
+    })
     res.redirect('/panel')
 })
 
