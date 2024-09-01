@@ -115,7 +115,9 @@ const getEvents = async (untisAccess) => {
             description,
             location,
             status: lesson.code === 'cancelled' ? 'CANCELLED' : 'CONFIRMED',
-            busyStatus: lesson.code === 'cancelled' ? 'FREE' : 'BUSY'
+            busyStatus: lesson.code === 'cancelled' ? 'FREE' : 'BUSY',
+            transp: lesson.code === 'cancelled' ? 'TRANSPARENT' : 'OPAQUE',
+            calName: untisAccess.name
         }
     })
     await untis.logout()
