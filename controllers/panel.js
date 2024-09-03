@@ -1,8 +1,8 @@
 const db = require('../models')
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcryptjs");
-const {randomUUID} = require("crypto");
-const {getWebUntis} = require("../services/untis")
+const jwt = require('jsonwebtoken')
+const bcrypt = require('bcryptjs')
+const {randomUUID} = require('crypto')
+const {getWebUntis} = require('../services/untis')
 
 const UntisAccess = db.untisAccess
 const PublicUntisAccess = db.publicUntisAccess

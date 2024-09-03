@@ -1,4 +1,4 @@
-const webuntis = require("webuntis")
+const webuntis = require('webuntis')
 
 const getWebUntis = (untisAccess) => {
     if (untisAccess.type === 'public') {
