@@ -111,6 +111,7 @@ const getEvents = async (untisAccess) => {
         const startUtc = momentTimezone.tz([year, month, day, startHour, startMinute], untisAccess.timezone).utc()
         const endUtc = momentTimezone.tz([year, month, day, endHour, endMinute], untisAccess.timezone).utc()
         const descriptionWithHomework = [description, ...homeworks].join(`\n`)
+        const titleWithInfoMark = title + (homeworks.length > 0 ? ' ℹ️' : '')
 
         return {
             start: [startUtc.year(), startUtc.month(), startUtc.date(), startUtc.hour(), startUtc.minute()],
@@ -119,7 +120,7 @@ const getEvents = async (untisAccess) => {
             end: [endUtc.year(), endUtc.month(), endUtc.date(), endUtc.hour(), endUtc.minute()],
             endInputType: 'utc',
             endOutputType: 'utc',
-            title,
+            title: titleWithInfoMark,
             description: descriptionWithHomework,
             location,
             status: lesson.code === 'cancelled' ? 'CANCELLED' : 'CONFIRMED',
