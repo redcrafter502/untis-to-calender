@@ -38,14 +38,6 @@ const getCurrentAndNextWeekRange = () => {
     return { startOfCurrentWeek, endOfNextWeek }
 }
 
-/*const getWebUntis = (untisAccess) => {
-    if (untisAccess.type === 'public') {
-        return new webuntis.WebUntisAnonymousAuth(untisAccess.school, untisAccess.domain)
-    } else {
-        return new webuntis.WebUntis(untisAccess.school, untisAccess.privateUntisAccess.username, untisAccess.privateUntisAccess.password, untisAccess.domain)
-    }
-}*/
-
 const getPublicTimetable = async (startOfCurrentWeek, endOfNextWeek, classId, untis) =>
     await untis.getTimetableForRange(startOfCurrentWeek, endOfNextWeek, classId, webuntis.WebUntisElementType.CLASS).catch(async (err) => {
         console.error('Timetable for range (or parts of it) not available', err)
@@ -220,133 +212,11 @@ app.get('/logout', (req, res) => {
 })
 
 app.get('/panel', panelRoute)
-/*app.get('/panel', async (req, res) => {
-    jwt.verify(req.cookies.authSession, process.env.AUTH_SECRET, async (err, decoded) => {
-        if (err) {
-            res.redirect('/')
-            return
-        }
-        const untisAccesses = await UntisAccess.findAll({where: {userId: decoded.id}})
-        res.render('panel/index', { untisAccesses, apiURL: process.env.API_URL })
-    })
-})*/
-
 app.post('/panel/change-password', panelChangePasswordRoute)
-/*app.post('/panel/change-password', async (req, res) => {
-    jwt.verify(req.cookies.authSession, process.env.AUTH_SECRET, async (err, decoded) => {
-        if (err) {
-            res.redirect('/')
-            return
-        }
-        const user = await User.findOne({where: { userId: decoded.id }})
-        const oldPasswordIsValid = bcrypt.compareSync(req.body.oldPassword, user.password)
-        if (!oldPasswordIsValid) {
-            res.redirect('/panel')
-            return
-        }
-        if (req.body.newPassword !== req.body.newPasswordConfirmed) {
-            res.redirect('/panel')
-            return
-        }
-        user.password = bcrypt.hashSync(req.body.newPassword, 10)
-        user.save()
-        res.redirect('/panel')
-    })
-})*/
-
 app.post('/panel/new', panelNewRoute)
-/*app.post('/panel/new', async (req, res) => {
-    jwt.verify(req.cookies.authSession, process.env.AUTH_SECRET, async (err, _) => {
-        if (err) {
-            res.redirect('/')
-            return
-        }
-        const type = req.body.type
-        const name = req.body.name
-        const domain = req.body.domain || 'neilo.webuntis.com'
-        const school = req.body.school
-        const timezone = req.body.timezone || 'Europe/Berlin'
-        if (!(type === 'public' || type === 'private')) {
-            res.redirect('/panel')
-            return
-        }
-        let classes = null
-        if (type === 'public') {
-            const untis = getWebUntis({ school, domain, type: 'public' })
-            await untis.login().catch(_ => {
-                res.redirect('/panel')
-            })
-            classes = await untis.getClasses(true, await untis.getCurrentSchoolyear().id).catch(_ => {
-                res.redirect('/panel')
-            })
-            await untis.logout()
-        }
-        res.render('panel/new', { type, classes, name, domain, school, timezone })
-    })
-})*/
-
 app.post('/panel/new-api', panelNewApiRoute)
-/*app.post('/panel/new-api', async (req, res) => {
-    jwt.verify(req.cookies.authSession, process.env.AUTH_SECRET, async (err, decoded) => {
-        if (err) {
-            res.redirect('/panel')
-            return
-        }
-        if (!(req.body.type === 'public' || req.body.type === 'private')) {
-            res.redirect('/panel')
-            return
-        }
-        const urlId = randomUUID()
-        const access = await UntisAccess.create({
-            name: req.body.name,
-            domain: req.body.domain,
-            school: req.body.school,
-            timezone: req.body.timezone,
-            type: req.body.type,
-            urlId,
-            userId: decoded.id
-        })
-        if (req.body.type === 'public') {
-            await PublicUntisAccess.create({
-                untisAccessId: access.untisAccessId,
-                classId: req.body.classes
-            })
-        } else {
-            await PrivateUnitsAccess.create({
-                untisAccessId: access.untisAccessId,
-                username: req.body.username,
-                password: req.body.password
-            })
-        }
-        res.redirect(`/panel/${urlId}`)
-    })
-})*/
-
 app.post('/panel/delete', panelDeleteRoute)
-/*app.post('/panel/delete', async (req, res) => {
-    jwt.verify(req.cookies.authSession, process.env.AUTH_SECRET, async (err, decoded) => {
-        if (err) {
-            res.redirect('/')
-            return
-        }
-        await UntisAccess.destroy({where: {untisAccessId: req.body.id, userId: decoded.id}})
-        res.redirect('/panel')
-    })
-})*/
-
 app.get('/panel/:id', panelIdRoute)
-/*app.get('/panel/:id', async (req, res) => {
-    jwt.verify(req.cookies.authSession, process.env.AUTH_SECRET, async (err, decoded) => {
-        if (err) {
-            res.redirect('/')
-            return
-        }
-        const untisAccess = await UntisAccess.findOne(
-            {where: {urlId: req.params.id, userId: decoded.id}, include: [ PublicUntisAccess, PrivateUnitsAccess ] }
-        )
-        res.render('panel/show', { untisAccess, apiURL: process.env.API_URL })
-    })
-})*/
 
 const PORT = process.env.PORT || 3000
 db.sequelize.sync().then(() => {
