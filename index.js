@@ -10,6 +10,8 @@ const bcrypt = require('bcryptjs')
 const { randomUUID } = require('crypto')
 const path = require('path')
 const db = require('./models')
+const {panelRoute, panelChangePasswordRoute, panelNewRoute, panelNewApiRoute, panelDeleteRoute, panelIdRoute} = require("./controllers/panel")
+const {getWebUntis} = require("./services/untis")
 
 const UntisAccess = db.untisAccess
 const PublicUntisAccess = db.publicUntisAccess
@@ -36,13 +38,13 @@ const getCurrentAndNextWeekRange = () => {
     return { startOfCurrentWeek, endOfNextWeek }
 }
 
-const getWebUntis = (untisAccess) => {
+/*const getWebUntis = (untisAccess) => {
     if (untisAccess.type === 'public') {
         return new webuntis.WebUntisAnonymousAuth(untisAccess.school, untisAccess.domain)
     } else {
         return new webuntis.WebUntis(untisAccess.school, untisAccess.privateUntisAccess.username, untisAccess.privateUntisAccess.password, untisAccess.domain)
     }
-}
+}*/
 
 const getPublicTimetable = async (startOfCurrentWeek, endOfNextWeek, classId, untis) =>
     await untis.getTimetableForRange(startOfCurrentWeek, endOfNextWeek, classId, webuntis.WebUntisElementType.CLASS).catch(async (err) => {
@@ -217,7 +219,8 @@ app.get('/logout', (req, res) => {
     res.redirect('/')
 })
 
-app.get('/panel', async (req, res) => {
+app.get('/panel', panelRoute)
+/*app.get('/panel', async (req, res) => {
     jwt.verify(req.cookies.authSession, process.env.AUTH_SECRET, async (err, decoded) => {
         if (err) {
             res.redirect('/')
@@ -226,9 +229,10 @@ app.get('/panel', async (req, res) => {
         const untisAccesses = await UntisAccess.findAll({where: {userId: decoded.id}})
         res.render('panel/index', { untisAccesses, apiURL: process.env.API_URL })
     })
-})
+})*/
 
-app.post('/panel/change-password', async (req, res) => {
+app.post('/panel/change-password', panelChangePasswordRoute)
+/*app.post('/panel/change-password', async (req, res) => {
     jwt.verify(req.cookies.authSession, process.env.AUTH_SECRET, async (err, decoded) => {
         if (err) {
             res.redirect('/')
@@ -248,9 +252,10 @@ app.post('/panel/change-password', async (req, res) => {
         user.save()
         res.redirect('/panel')
     })
-})
+})*/
 
-app.post('/panel/new', async (req, res) => {
+app.post('/panel/new', panelNewRoute)
+/*app.post('/panel/new', async (req, res) => {
     jwt.verify(req.cookies.authSession, process.env.AUTH_SECRET, async (err, _) => {
         if (err) {
             res.redirect('/')
@@ -278,9 +283,10 @@ app.post('/panel/new', async (req, res) => {
         }
         res.render('panel/new', { type, classes, name, domain, school, timezone })
     })
-})
+})*/
 
-app.post('/panel/new-api', async (req, res) => {
+app.post('/panel/new-api', panelNewApiRoute)
+/*app.post('/panel/new-api', async (req, res) => {
     jwt.verify(req.cookies.authSession, process.env.AUTH_SECRET, async (err, decoded) => {
         if (err) {
             res.redirect('/panel')
@@ -314,9 +320,10 @@ app.post('/panel/new-api', async (req, res) => {
         }
         res.redirect(`/panel/${urlId}`)
     })
-})
+})*/
 
-app.post('/panel/delete', async (req, res) => {
+app.post('/panel/delete', panelDeleteRoute)
+/*app.post('/panel/delete', async (req, res) => {
     jwt.verify(req.cookies.authSession, process.env.AUTH_SECRET, async (err, decoded) => {
         if (err) {
             res.redirect('/')
@@ -325,9 +332,10 @@ app.post('/panel/delete', async (req, res) => {
         await UntisAccess.destroy({where: {untisAccessId: req.body.id, userId: decoded.id}})
         res.redirect('/panel')
     })
-})
+})*/
 
-app.get('/panel/:id', async (req, res) => {
+app.get('/panel/:id', panelIdRoute)
+/*app.get('/panel/:id', async (req, res) => {
     jwt.verify(req.cookies.authSession, process.env.AUTH_SECRET, async (err, decoded) => {
         if (err) {
             res.redirect('/')
@@ -338,7 +346,7 @@ app.get('/panel/:id', async (req, res) => {
         )
         res.render('panel/show', { untisAccess, apiURL: process.env.API_URL })
     })
-})
+})*/
 
 const PORT = process.env.PORT || 3000
 db.sequelize.sync().then(() => {
