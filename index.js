@@ -6,12 +6,11 @@ const ics = require('ics')
 const webuntis = require('webuntis')
 const momentTimezone = require('moment-timezone')
 const jwt = require('jsonwebtoken')
-const bcrypt = require('bcryptjs')
-const { randomUUID } = require('crypto')
 const path = require('path')
 const db = require('./models')
-const {panelRoute, panelChangePasswordRoute, panelNewRoute, panelNewApiRoute, panelDeleteRoute, panelIdRoute} = require("./controllers/panel")
-const {getWebUntis} = require("./services/untis")
+const {panelRoute, panelChangePasswordRoute, panelNewRoute, panelNewApiRoute, panelDeleteRoute, panelIdRoute} = require('./controllers/panel')
+const {getWebUntis} = require('./services/untis')
+const {logoutRoute, loginApiRoute, loginRoute} = require('./controllers/authentication')
 
 const UntisAccess = db.untisAccess
 const PublicUntisAccess = db.publicUntisAccess
@@ -174,43 +173,9 @@ app.get('/', async (req, res) => {
 
 })
 
-app.get('/login', (req, res) => {
-    jwt.verify(req.cookies.authSession, process.env.AUTH_SECRET, (err, _) => {
-        if (err) {
-            res.render('login')
-            return
-        }
-        res.redirect('/panel')
-    })
-})
-
-app.post('/login-api', async (req, res) => {
-    const user = await User.findOne({where: {email: req.body.email}})
-    if (!user) {
-        res.redirect('/login')
-        return
-    }
-    const passwordIsValid = bcrypt.compareSync(req.body.password, user.password)
-    if (!passwordIsValid) {
-        res.redirect('/login')
-        return
-    }
-    const token = jwt.sign({id: user.userId}, process.env.AUTH_SECRET, {
-        expiresIn: 86400 // 24 hours
-    })
-    res.cookie('authSession', token, {
-        secure: true,
-        httpOnly: true,
-        sameSite: 'strict'
-    })
-    res.redirect('/panel')
-})
-
-app.get('/logout', (req, res) => {
-    res.clearCookie('authSession')
-    res.redirect('/')
-})
-
+app.get('/login', loginRoute)
+app.post('/login-api', loginApiRoute)
+app.get('/logout', logoutRoute)
 app.get('/panel', panelRoute)
 app.post('/panel/change-password', panelChangePasswordRoute)
 app.post('/panel/new', panelNewRoute)
