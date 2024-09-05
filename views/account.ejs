@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+</head>
+<script>
+    function checkConfirmedPassword() {
+        const input = document.getElementById('newPasswordConfirmed')
+        if (input.value !== document.getElementById('newPassword').value) {
+            input.setCustomValidity('Password Must be Matching.')
+        } else {
+            input.setCustomValidity('')
+        }
+    }
+</script>
+<body>
+<nav class="navbar navbar-expand bg-body-tertiary">
+    <div class="container-fluid">
+        <span class="navbar-brand mb-0 h1">Untis to Calender</span>
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+                <a class="nav-link" href="/">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/panel">Panel</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="/account">Account</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/logout">Logout</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+<div class="container mt-4">
+    <h2 class="mt-4">Change Password</h2>
+    <form action="/change-password" method="POST">
+        <div class="form-group">
+            <label for="oldPassword">Old Password</label>
+            <input required type="password" name="oldPassword" id="oldPassword" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="newPassword">New Password</label>
+            <input required type="password" name="newPassword" id="newPassword" oninput="checkConfirmedPassword()" class="form-control">
+        </div>
+        <div class="form-group mb-3">
+            <label for="newPasswordConfirmed">Confirm New Password</label>
+            <input required type="password" name="newPasswordConfirmed" id="newPasswordConfirmed" oninput="checkConfirmedPassword()" class="form-control">
+        </div>
+        <button type="submit" class="btn btn-primary">Change Password</button>
+    </form>
+</div>
+</body>
+</html>

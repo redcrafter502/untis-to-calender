@@ -41,4 +41,36 @@ const logoutRoute = (req, res) => {
     res.redirect('/')
 }
 
-module.exports = {logoutRoute, loginApiRoute, loginRoute}
+const accountRoute = (req, res) => {
+    jwt.verify(req.cookies.authSession, process.env.AUTH_SECRET, async (err, decoded) => {
+        if (err) {
+            res.redirect('/')
+            return
+        }
+        res.render('account')
+    })
+}
+
+const panelChangePasswordRoute = async (req, res) => {
+    jwt.verify(req.cookies.authSession, process.env.AUTH_SECRET, async (err, decoded) => {
+        if (err) {
+            res.redirect('/')
+            return
+        }
+        const user = await User.findOne({where: { userId: decoded.id }})
+        const oldPasswordIsValid = bcrypt.compareSync(req.body.oldPassword, user.password)
+        if (!oldPasswordIsValid) {
+            res.redirect('/account')
+            return
+        }
+        if (req.body.newPassword !== req.body.newPasswordConfirmed) {
+            res.redirect('/account')
+            return
+        }
+        user.password = bcrypt.hashSync(req.body.newPassword, 10)
+        user.save()
+        res.redirect('/account')
+    })
+}
+
+module.exports = {logoutRoute, loginApiRoute, loginRoute, accountRoute, panelChangePasswordRoute}

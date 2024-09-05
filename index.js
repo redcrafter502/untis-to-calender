@@ -6,9 +6,9 @@ const ics = require('ics')
 const jwt = require('jsonwebtoken')
 const path = require('path')
 const db = require('./models')
-const {panelRoute, panelChangePasswordRoute, panelNewRoute, panelNewApiRoute, panelDeleteRoute, panelIdRoute} = require('./controllers/panel')
+const {panelRoute, panelNewRoute, panelNewApiRoute, panelDeleteRoute, panelIdRoute} = require('./controllers/panel')
 const {getEvents} = require('./services/untis')
-const {logoutRoute, loginApiRoute, loginRoute} = require('./controllers/authentication')
+const {logoutRoute, loginApiRoute, loginRoute, accountRoute, panelChangePasswordRoute} = require('./controllers/authentication')
 
 const UntisAccess = db.untisAccess
 const PublicUntisAccess = db.publicUntisAccess
@@ -51,8 +51,9 @@ app.get('/', async (req, res) => {
 app.get('/login', loginRoute)
 app.post('/login-api', loginApiRoute)
 app.get('/logout', logoutRoute)
+app.get('/account', accountRoute)
+app.post('/change-password', panelChangePasswordRoute)
 app.get('/panel', panelRoute)
-app.post('/panel/change-password', panelChangePasswordRoute)
 app.post('/panel/new', panelNewRoute)
 app.post('/panel/new-api', panelNewApiRoute)
 app.post('/panel/delete', panelDeleteRoute)

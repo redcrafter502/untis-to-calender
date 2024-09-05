@@ -1,13 +1,11 @@
 const db = require('../models')
 const jwt = require('jsonwebtoken')
-const bcrypt = require('bcryptjs')
 const {randomUUID} = require('crypto')
 const {getWebUntis} = require('../services/untis')
 
 const UntisAccess = db.untisAccess
 const PublicUntisAccess = db.publicUntisAccess
 const PrivateUnitsAccess = db.privateUntisAccess
-const User = db.user
 
 const panelRoute = async (req, res) => {
     jwt.verify(req.cookies.authSession, process.env.AUTH_SECRET, async (err, decoded) => {
@@ -17,28 +15,6 @@ const panelRoute = async (req, res) => {
         }
         const untisAccesses = await UntisAccess.findAll({where: {userId: decoded.id}})
         res.render('panel/index', { untisAccesses, apiURL: process.env.API_URL })
-    })
-}
-
-const panelChangePasswordRoute = async (req, res) => {
-    jwt.verify(req.cookies.authSession, process.env.AUTH_SECRET, async (err, decoded) => {
-        if (err) {
-            res.redirect('/')
-            return
-        }
-        const user = await User.findOne({where: { userId: decoded.id }})
-        const oldPasswordIsValid = bcrypt.compareSync(req.body.oldPassword, user.password)
-        if (!oldPasswordIsValid) {
-            res.redirect('/panel')
-            return
-        }
-        if (req.body.newPassword !== req.body.newPasswordConfirmed) {
-            res.redirect('/panel')
-            return
-        }
-        user.password = bcrypt.hashSync(req.body.newPassword, 10)
-        user.save()
-        res.redirect('/panel')
     })
 }
 
@@ -135,4 +111,4 @@ const panelIdRoute = async (req, res) => {
     })
 }
 
-module.exports = {panelRoute, panelChangePasswordRoute, panelNewRoute, panelNewApiRoute, panelDeleteRoute, panelIdRoute}
+module.exports = {panelRoute, panelNewRoute, panelNewApiRoute, panelDeleteRoute, panelIdRoute}

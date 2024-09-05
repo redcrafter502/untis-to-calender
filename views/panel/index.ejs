@@ -14,14 +14,6 @@
             console.error('Async: Could not copy text: ', err);
         });
     }
-    function checkConfirmedPassword() {
-        const input = document.getElementById('newPasswordConfirmed')
-        if (input.value != document.getElementById('newPassword').value) {
-            input.setCustomValidity('Password Must be Matching.')
-        } else {
-            input.setCustomValidity('')
-        }
-    }
 </script>
 <body>
 <nav class="navbar navbar-expand bg-body-tertiary">
@@ -33,6 +25,9 @@
             </li>
             <li class="nav-item">
                 <a class="nav-link active" href="/panel">Panel</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/account">Account</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/logout">Logout</a>
@@ -67,22 +62,6 @@
             <input type="text" name="timezone" id="timezone" placeholder="Europe/Berlin" class="form-control">
         </div>
         <button type="submit" class="btn btn-primary">Create</button>
-    </form>
-    <h2 class="mt-4">Change Password</h2>
-    <form action="/panel/change-password" method="POST">
-        <div class="form-group">
-            <label for="oldPassword">Old Password</label>
-            <input required type="password" name="oldPassword" id="oldPassword" class="form-control">
-        </div>
-        <div class="form-group">
-            <label for="newPassword">New Password</label>
-            <input required type="password" name="newPassword" id="newPassword" oninput="checkConfirmedPassword()" class="form-control">
-        </div>
-        <div class="form-group mb-3">
-            <label for="newPasswordConfirmed">Confirm New Password</label>
-            <input required type="password" name="newPasswordConfirmed" id="newPasswordConfirmed" oninput="checkConfirmedPassword()" class="form-control">
-        </div>
-        <button type="submit" class="btn btn-primary">Change Password</button>
     </form>
     <h2 class="mt-4">UntisAccesses</h2>
     <% if (untisAccesses && untisAccesses.length >= 1) { %>
