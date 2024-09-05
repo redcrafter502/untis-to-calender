@@ -37,6 +37,9 @@
     </div>
 </nav>
 <div class="container mt-4">
+    <h2>Your Account</h2>
+    <p>Email: <%= user.email %></p>
+    <p>Created At: <%= user.createdAt %></p>
     <h2 class="mt-4">Change Password</h2>
     <form action="/change-password" method="POST">
         <div class="form-group">

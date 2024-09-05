@@ -47,7 +47,8 @@ const accountRoute = (req, res) => {
             res.redirect('/')
             return
         }
-        res.render('account')
+        const user = await User.findByPk(decoded.id)
+        res.render('account', { user })
     })
 }
 
