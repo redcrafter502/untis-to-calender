@@ -58,7 +58,7 @@ const panelChangePasswordRoute = async (req, res) => {
             res.redirect('/')
             return
         }
-        const user = await User.findOne({where: { userId: decoded.id }})
+        const user = await User.findByPk(decoded.id)
         const oldPasswordIsValid = bcrypt.compareSync(req.body.oldPassword, user.password)
         if (!oldPasswordIsValid) {
             res.redirect('/account')
