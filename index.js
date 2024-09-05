@@ -8,7 +8,7 @@ const path = require('path')
 const db = require('./models')
 const {panelRoute, panelNewRoute, panelNewApiRoute, panelDeleteRoute, panelIdRoute} = require('./controllers/panel')
 const {getEvents} = require('./services/untis')
-const {logoutRoute, loginApiRoute, loginRoute, accountRoute, panelChangePasswordRoute} = require('./controllers/authentication')
+const {logoutRoute, loginApiRoute, loginRoute, accountRoute, panelChangePasswordRoute, deleteAccountRoute} = require('./controllers/authentication')
 
 const UntisAccess = db.untisAccess
 const PublicUntisAccess = db.publicUntisAccess
@@ -53,6 +53,7 @@ app.post('/login-api', loginApiRoute)
 app.get('/logout', logoutRoute)
 app.get('/account', accountRoute)
 app.post('/change-password', panelChangePasswordRoute)
+app.post('/delete-account', deleteAccountRoute)
 app.get('/panel', panelRoute)
 app.post('/panel/new', panelNewRoute)
 app.post('/panel/new-api', panelNewApiRoute)

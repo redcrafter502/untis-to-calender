@@ -74,4 +74,16 @@ const panelChangePasswordRoute = async (req, res) => {
     })
 }
 
-module.exports = {logoutRoute, loginApiRoute, loginRoute, accountRoute, panelChangePasswordRoute}
+const deleteAccountRoute = (req, res)  => {
+    jwt.verify(req.cookies.authSession, process.env.AUTH_SECRET, async (err, decoded) => {
+        if (err) {
+            res.redirect('/')
+            return
+        }
+        const user = await User.findByPk(decoded.id)
+        await user.destroy()
+        res.redirect('/logout')
+    })
+}
+
+module.exports = {logoutRoute, loginApiRoute, loginRoute, accountRoute, panelChangePasswordRoute, deleteAccountRoute}
