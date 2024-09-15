@@ -83,8 +83,40 @@ const getEvents = async (untisAccess) => {
         teachers: [],
         lessons: []
     }
+    let examEvents = []
     if (untisAccess.type === 'private') {
         homework = await untis.getHomeWorksFor(startOfCurrentWeek, endOfNextWeek)
+
+        const { startDate, endDate } = await untis.getCurrentSchoolyear()
+        const exams = await untis.getExamsForRange(startDate, endDate)
+        examEvents = exams.map(exam => {
+            const year = Math.floor(exam.examDate / 10000)
+            const month = Math.floor((exam.examDate % 10000) / 100)
+            const day = exam.examDate % 100
+            const [startHour, startMinute] = parseTime(exam.startTime)
+            const [endHour, endMinute] = parseTime(exam.endTime)
+            const startUtc = momentTimezone.tz([year, month - 1, day, startHour, startMinute], untisAccess.timezone).utc()
+            const endUtc = momentTimezone.tz([year, month - 1, day, endHour, endMinute], untisAccess.timezone).utc()
+            const title = `${exam.name} (${exam.examType})` || 'NO TITLE'
+            const description = `${exam.name} (${exam.subject} - ${exam.studentClass.join(' ')} - ${exam.teachers.join(' ')}) ${exam.text}` || 'NO DESCRIPTION'
+            const location = exam.rooms.join(' ') || 'NO LOCATION'
+
+            return {
+                start: [startUtc.year(), startUtc.month() + 1, startUtc.date(), startUtc.hour(), startUtc.minute()],
+                startInputType: 'utc',
+                startOutputType: 'utc',
+                end: [endUtc.year(), endUtc.month() + 1, endUtc.date(), endUtc.hour(), endUtc.minute()],
+                endInputType: 'utc',
+                endOutputType: 'utc',
+                title,
+                description,
+                location,
+                status: 'CONFIRMED',
+                busyStatus: 'BUSY',
+                transp: 'OPAQUE',
+                calName: untisAccess.name
+            }
+        })
     }
 
     const events = timetable.map(lesson => {
@@ -105,19 +137,19 @@ const getEvents = async (untisAccess) => {
         const day = lesson.date % 100
         const [startHour, startMinute] = parseTime(lesson.startTime)
         const [endHour, endMinute] = parseTime(lesson.endTime)
-        const title = lesson.su[0].name || lesson.lstext || 'No Title'
+        const title = lesson.su[0].name || lesson.lstext || 'NO TITLE'
         const description = `${lesson.su[0].longname} - ${lesson.kl.map(k => k.name).join(', ')}` || `${lesson.lstext} - ${lesson.kl[0].name}` || 'NO DESCRIPTION'
         const location = `${lesson.ro[0].longname} (${lesson.ro[0].name})` || 'NO LOCATION'
-        const startUtc = momentTimezone.tz([year, month, day, startHour, startMinute], untisAccess.timezone).utc()
-        const endUtc = momentTimezone.tz([year, month, day, endHour, endMinute], untisAccess.timezone).utc()
+        const startUtc = momentTimezone.tz([year, month - 1, day, startHour, startMinute], untisAccess.timezone).utc()
+        const endUtc = momentTimezone.tz([year, month - 1, day, endHour, endMinute], untisAccess.timezone).utc()
         const descriptionWithHomework = [description, ...homeworks].join(`\n`)
         const titleWithInfoMark = title + (homeworks.length > 0 ? ' ℹ️' : '')
 
         return {
-            start: [startUtc.year(), startUtc.month(), startUtc.date(), startUtc.hour(), startUtc.minute()],
+            start: [startUtc.year(), startUtc.month() + 1, startUtc.date(), startUtc.hour(), startUtc.minute()],
             startInputType: 'utc',
             startOutputType: 'utc',
-            end: [endUtc.year(), endUtc.month(), endUtc.date(), endUtc.hour(), endUtc.minute()],
+            end: [endUtc.year(), endUtc.month() + 1, endUtc.date(), endUtc.hour(), endUtc.minute()],
             endInputType: 'utc',
             endOutputType: 'utc',
             title: titleWithInfoMark,
@@ -130,7 +162,7 @@ const getEvents = async (untisAccess) => {
         }
     })
     await untis.logout()
-    return events
+    return [...events, ...examEvents]
 }
 
 module.exports = {getWebUntis, getEvents}
