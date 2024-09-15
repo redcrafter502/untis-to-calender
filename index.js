@@ -24,7 +24,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cookieParser())
 
 app.get('/ics/:id', async (req, res) => {
-    console.info('Updating Calender')
+    console.info('Updating Calendar')
     const untisAccess = await UntisAccess.findOne({where: {urlId: req.params.id}, include: [ PublicUntisAccess, PrivateUnitsAccess ] })
     const events = await getEvents(untisAccess)
     const {err, value} = ics.createEvents(events)

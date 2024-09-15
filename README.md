@@ -1,4 +1,4 @@
-# Untis to Calender
+# Untis to Calendar
 
 ## Table of Contents
 * [What is it good for?](#purpose)
@@ -18,7 +18,7 @@ To run the backend and to run the frontend you must have installed [NodeJs](http
     * You need to define an url to be displayed in the ui. Example: `API_URL=http://localhost:3000`
     * You need to set the data for your instance of PostgreSQL. Example: `DB_USERNAME="postgres"
 DB_PASSWORD="password"
-DB_DATABASE="untis-to-calender"
+DB_DATABASE="untis-to-calendar"
 DB_HOST="localhost"
 DB_DIALECT="postgres"
 DB_POOL_MAX=5
