@@ -12,10 +12,10 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "bootstrap": "^5.3.3",
-    "cookie-parser": "^1.4.6",
+    "cookie-parser": "^1.4.7",
     "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
-    "express": "^4.21.0",
+    "express": "^4.21.1",
     "ics": "^3.7.2",
     "jsonwebtoken": "^9.0.2",
     "moment-timezone": "^0.5.45",
