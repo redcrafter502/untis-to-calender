@@ -1,5 +1,5 @@
 import { HexclaveHandler } from "@hexclave/next";
-import { hexclaveServerApp } from "../../../stack";
+import { hexclaveServerApp } from "../../../hexclave";
 
 export default function Handler(props: unknown) {
   return (

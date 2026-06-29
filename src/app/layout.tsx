@@ -1,6 +1,6 @@
 import "./globals.css";
 import { HexclaveProvider, HexclaveTheme } from "@hexclave/next";
-import { hexclaveServerApp } from "../stack";
+import { hexclaveServerApp } from "../hexclave";
 import type { Metadata } from "next";
 import ThemeProvider from "../components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";

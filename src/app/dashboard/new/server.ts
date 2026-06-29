@@ -1,6 +1,6 @@
 "use server";
 
-import { hexclaveServerApp } from "@/stack";
+import { hexclaveServerApp } from "@/hexclave";
 import { formSchema } from "./validators";
 import { type } from "arktype";
 import {

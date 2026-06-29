@@ -1,5 +1,5 @@
 import { MUTATIONS } from "@/db/queries";
-import { hexclaveServerApp } from "@/stack";
+import { hexclaveServerApp } from "@/hexclave";
 import { ok, err, type Result } from "neverthrow";
 
 export async function removeAccess(id: string) {

@@ -1,7 +1,7 @@
 "use server";
 
 import { MUTATIONS } from "@/db/queries";
-import { hexclaveServerApp } from "@/stack";
+import { hexclaveServerApp } from "@/hexclave";
 
 export async function deleteAccountAction() {
   const user = await hexclaveServerApp.getUser({ or: "redirect" });

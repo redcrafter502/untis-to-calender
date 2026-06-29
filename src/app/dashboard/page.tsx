@@ -6,7 +6,7 @@ import {
   CardTitle,
   CardContent,
 } from "@/components/ui/card";
-import { hexclaveServerApp } from "@/stack";
+import { hexclaveServerApp } from "@/hexclave";
 import { ArrowRight, Loader2, ScanQrCode } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
