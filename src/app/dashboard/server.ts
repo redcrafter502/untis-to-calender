@@ -1,10 +1,10 @@
 "use server";
 
 import { MUTATIONS } from "@/db/queries";
-import { stackServerApp } from "@/stack";
+import { hexclaveServerApp } from "@/stack";
 
 export async function deleteAccountAction() {
-  const user = await stackServerApp.getUser({ or: "redirect" });
+  const user = await hexclaveServerApp.getUser({ or: "redirect" });
   const accesses = (user.serverMetadata?.accesses ?? []) as string[];
   const results = await Promise.all(
     accesses.map((access) => MUTATIONS.deleteAccess(access)),

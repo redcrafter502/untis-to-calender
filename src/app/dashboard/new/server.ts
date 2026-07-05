@@ -1,6 +1,6 @@
 "use server";
 
-import { stackServerApp } from "@/stack";
+import { hexclaveServerApp } from "@/stack";
 import { formSchema } from "./validators";
 import { type } from "arktype";
 import {
@@ -14,7 +14,7 @@ import { Result, err, ok } from "neverthrow";
 import { getUntis } from "@/lib/untis";
 
 export async function getClasses(school: string, domain: string) {
-  await stackServerApp.getUser({ or: "redirect" });
+  await hexclaveServerApp.getUser({ or: "redirect" });
   const untis = getUntis({
     url: domain,
     school,
@@ -32,7 +32,7 @@ export async function getClasses(school: string, domain: string) {
 }
 
 export async function createAccess(values: typeof formSchema.infer) {
-  await stackServerApp.getUser({ or: "redirect" });
+  await hexclaveServerApp.getUser({ or: "redirect" });
   const validatedValues = formSchema(values);
   if (validatedValues instanceof type.errors)
     return { error: validatedValues.summary };
@@ -59,7 +59,7 @@ function validate(values: typeof formSchema.infer): Result<AccessById, string> {
 }
 
 async function addIdToUser(uuid: string) {
-  const user = await stackServerApp.getUser({ or: "redirect" });
+  const user = await hexclaveServerApp.getUser({ or: "redirect" });
   await user.update({
     serverMetadata: {
       accesses: [...(user.serverMetadata?.accesses ?? []), uuid],

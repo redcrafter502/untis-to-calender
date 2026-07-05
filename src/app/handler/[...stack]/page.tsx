@@ -1,11 +1,11 @@
-import { StackHandler } from "@stackframe/stack";
-import { stackServerApp } from "../../../stack";
+import { HexclaveHandler } from "@hexclave/next";
+import { hexclaveServerApp } from "../../../stack";
 
 export default function Handler(props: unknown) {
   return (
-    <StackHandler
+    <HexclaveHandler
       fullPage
-      app={stackServerApp}
+      app={hexclaveServerApp}
       routeProps={props}
       componentProps={{
         SignIn: {

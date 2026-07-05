@@ -6,14 +6,14 @@ import {
   CardTitle,
   CardContent,
 } from "@/components/ui/card";
-import { stackServerApp } from "@/stack";
+import { hexclaveServerApp } from "@/stack";
 import { ArrowRight, Loader2, ScanQrCode } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
 import { AccessCard } from "./_accessCard/accessCard";
 
 export default async function DashboardPage() {
-  const user = await stackServerApp.getUser({ or: "redirect" });
+  const user = await hexclaveServerApp.getUser({ or: "redirect" });
   const accesses = (user.serverMetadata?.accesses ?? []) as string[];
 
   return (
@@ -30,9 +30,9 @@ export default async function DashboardPage() {
               <CardContent className="flex items-end space-x-2">
                 <div className="flex flex-col gap-4">
                   <p className="text-sm">
-                    Scanning the QR code is the recommended, easiest and most
+                    {`Scanning the QR code is the recommended, easiest and most
                     secure way to connect your untis account to "Untis to
-                    calendar".
+                    calendar".`}
                   </p>
                   <Button className="w-full" asChild>
                     <a href="/dashboard/new?state=qrcode">

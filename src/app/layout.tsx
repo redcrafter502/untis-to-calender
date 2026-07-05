@@ -1,6 +1,6 @@
 import "./globals.css";
-import { StackProvider, StackTheme } from "@stackframe/stack";
-import { stackServerApp } from "../stack";
+import { HexclaveProvider, HexclaveTheme } from "@hexclave/next";
+import { hexclaveServerApp } from "../stack";
 import type { Metadata } from "next";
 import ThemeProvider from "../components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
@@ -27,12 +27,12 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <StackProvider app={stackServerApp}>
-            <StackTheme>
+          <HexclaveProvider app={hexclaveServerApp}>
+            <HexclaveTheme>
               {children}
               <Toaster />
-            </StackTheme>
-          </StackProvider>
+            </HexclaveTheme>
+          </HexclaveProvider>
         </ThemeProvider>
       </body>
     </html>

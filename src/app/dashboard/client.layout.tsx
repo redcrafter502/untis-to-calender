@@ -1,6 +1,6 @@
 "use client";
 
-import { UserButton } from "@stackframe/stack";
+import { UserButton } from "@hexclave/next";
 import { TrashIcon } from "lucide-react";
 import { deleteAccountAction } from "./server";
 import { useRouter } from "next/navigation";

@@ -1,5 +1,5 @@
 import { MUTATIONS } from "@/db/queries";
-import { stackServerApp } from "@/stack";
+import { hexclaveServerApp } from "@/stack";
 import { ok, err, type Result } from "neverthrow";
 
 export async function removeAccess(id: string) {
@@ -12,7 +12,7 @@ export async function removeAccess(id: string) {
 }
 
 async function removeIdFromUser(uuid: string): Promise<Result<void, string>> {
-  const user = await stackServerApp.getUser({ or: "redirect" });
+  const user = await hexclaveServerApp.getUser({ or: "redirect" });
   if (!((user.serverMetadata.accesses ?? []) as string[]).includes(uuid))
     return err("Permission denied");
   await user.update({
