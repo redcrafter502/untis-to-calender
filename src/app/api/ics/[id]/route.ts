@@ -25,13 +25,17 @@ export async function GET(
   if (data.value.authType === "password" || data.value.authType === "secret") {
     const exams = await untis.getExamsForCurrentSchoolyear(session.value);
     if (exams.isErr()) {
-      await untis.logout(session.value);
-      return new Response("Failed to get exams", { status: 500 });
+      calendar.createEvent({
+        start: new Date(),
+        end: new Date(),
+        summary: "Failed to get exams",
+      });
+    } else {
+      getExamCalEvents(exams.value).forEach((event) => {
+        if (!event) return;
+        calendar.createEvent(event);
+      });
     }
-    getExamCalEvents(exams.value).forEach((event) => {
-      if (!event) return;
-      calendar.createEvent(event);
-    });
   }
 
   const { startOfCurrentWeek, endOfNextWeek } = getCurrentAndNextWeekRange();
@@ -41,13 +45,17 @@ export async function GET(
     session.value,
   );
   if (lessons.isErr()) {
-    await untis.logout(session.value);
-    return new Response("Failed to get lessons", { status: 500 });
+    calendar.createEvent({
+      start: new Date(),
+      end: new Date(),
+      summary: "Failed to get lessons",
+    });
+  } else {
+    getLessonCalEvents(lessons.value).forEach((event) => {
+      if (!event) return;
+      calendar.createEvent(event);
+    });
   }
-  getLessonCalEvents(lessons.value).forEach((event) => {
-    if (!event) return;
-    calendar.createEvent(event);
-  });
 
   await untis.logout(session.value);
 
